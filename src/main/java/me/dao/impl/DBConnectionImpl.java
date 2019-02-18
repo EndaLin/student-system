@@ -9,15 +9,14 @@ import java.sql.SQLException;
 import me.dao.IDBConnectionDao;
 
 public class DBConnectionImpl implements IDBConnectionDao {
-	
-	//private static String url = "jdbc:sqlserver://127.0.0.1:1433;databaseName=BaiduFace;integratedSecurity=true;characterEncoding=utf-8;";
-	//private static String driverName = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
-	private static String url = "jdbc:mysql://niracler.com:3306/StuSys?user=team&password=12345678&useUnicode=true&characterEncoding=UTF8";
+
+	private static String url = "jdbc:mysql://xiaom.xin:3306/StuSys?user=root&password=0420&useUnicode=true&characterEncoding=UTF8&useSSL=false";
 	private static String driverName = "com.mysql.jdbc.Driver";
     
 	static {
 		try {
-		     Class.forName(driverName);  //加载JDBC驱动程序
+			//加载JDBC驱动程序
+		     Class.forName(driverName);
 		} catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -25,7 +24,8 @@ public class DBConnectionImpl implements IDBConnectionDao {
 	
 	public static Connection getConnection() {
 		try {
-			Connection con = DriverManager.getConnection(url); //创建数据库连接
+			//创建数据库连接
+			Connection con = DriverManager.getConnection(url);
 			return con;
 		} catch(SQLException e) {
 			e.printStackTrace();
