@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>学生信息管理平台</title>
+
+		<!-- CSS -->
+		<link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" href="assets/font-awesome/css/font-awesome.min.css">
+		<link rel="stylesheet" href="assets/css/form-elements.css">
+		<link rel="stylesheet" href="assets/css/style.css">
+
+		<!-- Favicon and touch icons -->
+		<link rel="shortcut icon" href="assets/ico/favicon.ico">
+		<style type="text/css">
+			body {
+				font-family: 'Roboto', sans-serif;
+				font-size: 16px;
+				font-weight: 300;
+				color: #888;
+				line-height: 30px;
+				text-align: center;
+			}
+			
+			strong {
+				font-weight: 500;
+			}
+			
+			h1,
+			h2 {
+				margin-top: 10px;
+				font-size: 38px;
+				font-weight: 100;
+				color: #555;
+				line-height: 50px;
+			}
+			
+			h3 {
+				font-size: 22px;
+				font-weight: 300;
+				color: #555;
+				line-height: 30px;
+			}
+			
+			img {
+				max-width: 100%;
+			}
+			
+			::-moz-selection {
+				background: #4aaf51;
+				color: #fff;
+				text-shadow: none;
+			}
+			
+			::selection {
+				background: #4aaf51;
+				color: #fff;
+				text-shadow: none;
+			}
+			
+			.btn-link-1 i {
+				padding-right: 5px;
+				vertical-align: middle;
+				font-size: 20px;
+				line-height: 20px;
+			}
+			/***** Top content *****/
+			
+			.inner-bg {
+				padding: 100px 0 170px 0;
+			}
+			
+			.top-content .text {
+				color: #fff;
+			}
+			
+			.top-content .text h1 {
+				color: #fff;
+			}
+			
+			.top-content .description {
+				margin: 20px 0 10px 0;
+			}
+			
+			.top-content .description p {
+				opacity: 0.8;
+			}
+			
+			.top-content .description a {
+				color: #fff;
+			}
+			
+			.top-content .description a:hover,
+			.top-content .description a:focus {
+				border-bottom: 1px dotted #fff;
+			}
+			
+			.form-box {
+				margin-top: 35px;
+			}
+			
+			.form-top {
+				overflow: hidden;
+				padding: 0 25px 15px 25px;
+				background: #fff;
+				-moz-border-radius: 4px 4px 0 0;
+				-webkit-border-radius: 4px 4px 0 0;
+				border-radius: 4px 4px 0 0;
+				text-align: left;
+			}
+			
+			.form-top-left {
+				float: left;
+				width: 75%;
+				padding-top: 25px;
+			}
+			
+			.form-top-left h3 {
+				margin-top: 0;
+			}
+			
+			.form-top-right {
+				float: left;
+				width: 25%;
+				padding-top: 5px;
+				font-size: 66px;
+				color: #ddd;
+				line-height: 100px;
+				text-align: right;
+			}
+			
+			.form-bottom {
+				padding: 25px 25px 30px 25px;
+				background: #eee;
+				-moz-border-radius: 0 0 4px 4px;
+				-webkit-border-radius: 0 0 4px 4px;
+				border-radius: 0 0 4px 4px;
+				text-align: left;
+			}
+			
+			.form-bottom form textarea {
+				height: 100px;
+			}
+			
+			.form-bottom form button.btn {
+				width: 100%;
+			}
+			
+			.social-login h3 {
+				color: #fff;
+			}
+			/***** Media queries *****/
+			
+			@media (min-width: 992px) and (max-width: 1199px) {}
+			
+			@media (min-width: 768px) and (max-width: 991px) {}
+			
+			@media (max-width: 767px) {
+				.inner-bg {
+					padding: 60px 0 110px 0;
+				}
+			}
+			
+			@media (max-width: 415px) {
+				h1,
+				h2 {
+					font-size: 32px;
+				}
+			}
+		</style>
+	</head>
+
+	<body>
+		<!-- Top content -->
+		<div class="top-content" id="app">
+
+			<div class="inner-bg">
+				<div class="container">
+					<div class="row" style="display: flex;justify-content:center">
+						<div class="col-sm-8 col-sm-offset-2 text">
+							<h1>
+							<strong>“学生信息”</strong> 管理平台
+						</h1>
+						</div>
+					</div>
+					<div class="row" style="display: flex;justify-content:center">
+						<div class="col-sm-6 col-sm-offset-3 form-box">
+							<div class="form-top">
+								<div class="form-top-left">
+									<h3>注册</h3>
+									<p>请输入账号、密码以及邮箱进行注册</p>
+								</div>
+								<div class="form-top-right">
+									<i class="fa fa-key"></i>
+								</div>
+							</div>
+
+							<div class="form-bottom">
+								<div class="form-group">
+									<label for="name">Username:</label>
+									<input type="text" class="form-control" id="name" placeholder="Enter Username" name="username" v-model="username">
+								</div>
+								<div class="form-group">
+									<label for="pwd">Password:</label>
+									<input type="password" class="form-control" id="pwd" placeholder="Enter password" name="password" v-model="password">
+								</div>
+								<div class="form-group">
+									<label for="email">Email:</label>
+									<input type="email" class="form-control" id="email" placeholder="Enter email" name="password" v-model="email">
+								</div>
+								<div class="Verification code">
+									<label for="code">Verification code:</label>
+									<div class="input-group mb-3">
+										<input type="text" class="form-control" placeholder="Verification code" id="code" name="code" v-model="code">
+										<div class="input-group-append">
+											<span class="input-group-text"><img src="http://localhost:8080/VerificationCodeServlet" id="img" @click="reflesh"/></span>
+										</div>
+									</div>
+								</div>
+								<div class="form-group"><button type="submit " class="btn " style="width: 100%;" @click="submitForm">提交账号注册申请</button></div>
+								<div class="alert alert-success" v-if="success !== ''">
+									<strong>{{success}}</strong>
+								</div>
+								<div class="alert alert-danger" v-if="errors !== ''">
+									<strong>{{errors}}</strong>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<div style="border-top: solid; border-color: white; width: 500px; height: 100px; margin-left: auto; margin-right: auto; text-align: center; ">
+			平台解释权归作者所有
+		</div>
+
+		<!-- Javascript -->
+		<script src="assets/js/jquery-1.11.1.min.js"></script>
+		<script src="assets/bootstrap/js/bootstrap.min.js"></script>
+		<script src="assets/js/jquery.backstretch.min.js"></script>
+		<script src="assets/js/scripts.js"></script>
+		<script src="assets/js/axios.min.js"></script>
+		<script src="assets/js/vue.js"></script>
+		<script src="assets/js/user.js"></script>
+		<script type="text/javascript">
+			var app = new Vue({
+				el: "#app",
+				data: {
+					username: "",
+					password: "",
+					email: "",
+					code: "",
+					success: "",
+					errors: ""
+				},
+				methods: {
+					submitForm: function() {
+						if(this.username == "" || this.password == "" || this.email == "" || this.code == "") {
+							this.errors = "账号、密码、邮箱或者验证码不能为空"
+							return
+						} else {
+							this.errors = ""
+						}
+
+						axios({
+								url: 'http://localhost:8080/RegisterServlet',
+								method: "post",
+								data: {
+									username: this.username,
+									password: this.password,
+									email: this.email,
+									code: this.code
+								},
+								//将JSON对象 转 键=值&键=值
+								/*
+								{
+								  name:"david",
+								  age:30
+								}
+								name=小李&age=30
+								// 在发送数据之前 将对象转键值对
+								*/
+								transformRequest: [function(data) {
+									// Do whatever you want to transform the data
+									let ret = ''
+									for(let it in data) {
+										// 如果要发送中文 编码 
+										ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+									}
+									return ret
+								}],
+								headers: {
+									'Content-Type': 'application/x-www-form-urlencoded'
+								}
+							})
+							.then(response => {
+								var data = response.data;
+								console.log(data);
+								if(data.code == 0) {
+									this.success = data.detail;
+								} else {
+									this.errors = data.detail;
+								}
+							})
+							.catch(function(error) {
+								console.log(error);
+							})
+					},
+					reflesh: function() {
+						$("#img").attr("src", "http://localhost:8080/VerificationCodeServlet?flag=" + Math.random());
+					}
+				}
+			})
+		</script>
+	</body>
+
+</html>

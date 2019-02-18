@@ -20,14 +20,18 @@ public class LoginDaoImpl {
 			rs = ps.executeQuery();
 			if (rs.next()) {
 				if (rs.getString("ischeck").equals("1") && rs.getString("password").equals(user.getPassword())) {
-					user.setType(rs.getInt("type")); // 账号密码均正确,而且账号通过审核,获取用户身份
+					// 账号密码均正确,而且账号通过审核,获取用户身份
+					user.setType(rs.getInt("type"));
 				} else if (rs.getString("ischeck").equals("0")) {
-					user.setType(-1); // 此处账号未通过审核的标志
+					// 此处账号未通过审核的标志
+					user.setType(-1);
 				} else {
-					user.setPassword(null); // 密码错误
+					// 密码错误
+					user.setPassword(null);
 				}
 			} else {
-				user.setAccount(null); // 账号为空
+				// 账号为空
+				user.setAccount(null);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

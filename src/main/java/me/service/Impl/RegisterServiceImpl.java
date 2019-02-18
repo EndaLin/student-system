@@ -15,7 +15,7 @@ public class RegisterServiceImpl implements IRegisterService{
         try {
 
             Connection con = DBConnectionImpl.getConnection();
-            String sql = "insert into user (account, password, type, ischeck)  values (?, ?, ?, ?)";
+            String sql = "insert into user (account, password, type, ischeck, email)  values (?, ?, ?, ?, ?)";
             PreparedStatement ps = null;
 
             assert con != null;
@@ -23,8 +23,8 @@ public class RegisterServiceImpl implements IRegisterService{
             ps.setString(1, user.getAccount());
             ps.setString(2, user.getPassword());
             ps.setInt(3, user.getType());
-            ps.setInt(4, user.getType());
-
+            ps.setInt(4, -1);
+            ps.setString(5, user.getEmail());
 
             ps.executeUpdate();
             ps.close();

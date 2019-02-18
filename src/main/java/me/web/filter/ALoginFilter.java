@@ -25,7 +25,7 @@ import me.web.UI.LoginUIServlet;
         DispatcherType.INCLUDE,
         DispatcherType.ERROR
 }
-        , urlPatterns = {"/*"})
+        , urlPatterns = {"/index.jsp"})
 public class ALoginFilter implements Filter {
 
     /**
@@ -38,6 +38,7 @@ public class ALoginFilter implements Filter {
     /**
      * @see Filter#destroy()
      */
+    @Override
     public void destroy() {
         // TODO Auto-generated method stub
     }
@@ -45,6 +46,7 @@ public class ALoginFilter implements Filter {
     /**
      * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
      */
+    @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         // TODO Auto-generated method stub
         // place your code here
@@ -64,6 +66,7 @@ public class ALoginFilter implements Filter {
     /**
      * @see Filter#init(FilterConfig)
      */
+    @Override
     public void init(FilterConfig fConfig) throws ServletException {
         // TODO Auto-generated method stub
     }

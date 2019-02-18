@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DeleteStudentByIdServiceImpl implements IDeleteStudentByIdService{
+
 	public static void delete(int id) throws ErrorMess {
 		try {
 			Connection con = DBConnectionImpl.getConnection();

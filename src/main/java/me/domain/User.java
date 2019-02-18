@@ -5,13 +5,28 @@ public class User {
     private String account; // 用户账号, 注意:此处不可以改为Int类型,因为管理员账号可为String
     private String password; // 用户密码
     private int type; // 用户类型
+    private String email;
 
+    public User(String account, String password, int type, String email) {
+        this.account = account;
+        this.password = password;
+        this.type = type;
+        this.email = email;
+    }
 
     public User(String account, String password, int type) {
         super();
         this.account = account;
         this.password = password;
         this.type = type;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getAccount() {

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>学生信息管理平台</title>
+		<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.css">
+
+		<link rel="stylesheet" type="text/css" href="stylesheets/theme.css">
+		<link rel="stylesheet" href="lib/font-awesome/css/font-awesome.css">
+
+		<script src="lib/jquery-1.7.2.min.js" type="text/javascript"></script>
+
+		<style type="text/css">
+			#line-chart {
+				height: 300px;
+				width: 800px;
+				margin: 0px auto;
+				margin-top: 1em;
+			}
+			
+			.brand {
+				font-family: georgia, serif;
+			}
+			
+			.brand .first {
+				color: #ccc;
+				font-style: italic;
+			}
+			
+			.brand .second {
+				color: #fff;
+				font-weight: bold;
+			}
+		</style>
+
+		<link rel="shortcut icon" href="../assets/ico/favicon.ico">
+		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+		<link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+		<link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+	</head>
+
+	<body class="">
+		<div id="app">
+
+			<div class="navbar">
+				<div class="navbar-inner">
+					<ul class="nav pull-right">
+
+						<li id="fat-menu" class="dropdown">
+							<a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">
+								<i class="icon-user"></i> {{user.name}}
+								<i class="icon-caret-down"></i>
+							</a>
+
+							<ul class="dropdown-menu">
+								<li>
+									<a tabindex="-1" href="#">My Account</a>
+								</li>
+								<li class="divider"></li>
+								<li class="divider visible-phone"></li>
+								<li>
+									<a tabindex="-1" href="/StuSys/LogoutServlet">Logout</a>
+								</li>
+							</ul>
+						</li>
+
+					</ul>
+					<a class="brand" href="index.html"><span class="first">学生信息</span> <span class="second">管理系统</span></a>
+				</div>
+			</div>
+
+			<div class="sidebar-nav">
+				<form class="search form-inline">
+					<input type="text" placeholder="Welcome...">
+				</form>
+				<!-- 管理员功能模块 -->
+				<div v-if="user.status == 0">
+					<a href="#dashboard-menu" class="nav-header" data-toggle="collapse"><i class="icon-dashboard"></i>信息管理<i class="icon-chevron-up"></i></a>
+					<ul id="dashboard-menu" class="nav nav-list collapse in">
+						<li>
+							<a href="/StuSys/showAllClasses.html">班级信息管理</a>
+						</li>
+						<li>
+							<a href="/StuSys/AddStudent.html">学生信息录入</a>
+						</li>
+						<li>
+							<a href="/StuSys/showCourse.html">课程信息管理</a>
+						</li>
+						<li>
+							<a href="/StuSys/assignmentCourse.html">学生排课管理</a>
+						</li>
+						<li>
+							<a href="/StuSys/showStuById.html">学生信息查询(个人)</a>
+						</li>
+						<li>
+							<a href="/StuSys/showStuByClass.html">学生信息查询(班级)</a>
+						</li>
+						<li>
+							<a href="/StuSys/AddScoreMess.html">录入学生成绩信息(批量)</a>
+						</li>
+						<li>
+							<a href="/StuSys/checkAccount.html">管理员账号审核</a>
+						</li>
+					</ul>
+				</div>
+				<!-- 学生功能模块 -->
+				<div v-else>
+					<a href="#accounts-menu" class="nav-header" data-toggle="collapse"><i class="icon-briefcase"></i>学生成绩管理<i class="icon-chevron-up"></i></a>
+					<ul id="accounts-menu" class="nav nav-list collapse in">
+						<li>
+							<a href="/StuSys/checkScore.html">查询个人成绩</a>
+						</li>
+						<li>
+							<a href="/StuSys/sortScore.html">成绩排名管理</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="content">
+
+				<div class="header">
+
+					<h1 class="page-title">欢迎来到学生信息管理平台</h1>
+				</div>
+
+				<ul class="breadcrumb">
+					<li>
+						<a href="index.html">Home</a> <span class="divider">/</span></li>
+				</ul>
+
+				<div class="container-fluid">
+					<div class="row-fluid">
+
+						<div class="row-fluid">
+
+							<div class="alert alert-info">
+								<button type="button" class="close" data-dismiss="alert">×</button>
+								<strong>About our project:</strong> Hope you like our works
+							</div>
+
+							<div class="block">
+								<a href="#page-stats" class="block-heading" data-toggle="collapse">About our project</a>
+								<div id="page-stats" class="block-body collapse in">
+
+									<div class="stat-widget-container">
+
+										<div class="stat-widget">
+											<div class="stat-button">
+												<p class="title">学以致用</p>
+												<p class="detail">Slogan</p>
+											</div>
+										</div>
+
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<footer>
+							<hr>
+
+							<p class="pull-right">
+								<a href="javascrip:void(0)" title="" target="_blank">解释权归作者所有</a>
+							</p>
+
+							<p>&copy; 2019
+								<a href="javascrip:void(0)" target="_blank">wt</a>
+							</p>
+						</footer>
+
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="lib/bootstrap/js/bootstrap.js"></script>
+		<script src="assets/js/vue.js"></script>
+		<script src="assets/js/user.js"></script>
+		<script type="text/javascript">
+			$("[rel=tooltip]").tooltip();
+			$(function() {
+				$('.demo-cancel-click').click(function() {
+					return false;
+				});
+			});
+
+			var app = new Vue({
+				el: "#app",
+				data: {
+					user: {
+						name: '',
+						status: ''
+					}
+				},
+				mounted() {
+					if(islogin()) {
+						var usernow = getUser();
+						this.user.name = usernow.name;
+						this.user.status = usernow.status;
+					} else {
+						window.location = "login.html";
+					}
+				}
+			})
+		</script>
+
+	</body>
+
+</html>
