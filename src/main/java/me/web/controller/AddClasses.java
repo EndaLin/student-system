@@ -9,7 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.alibaba.fastjson.JSONObject;
 import me.domain.ErrorMess;
+import me.domain.Message;
 import me.service.Impl.AddClassServiceImpl;
 
 /**
@@ -30,6 +32,7 @@ public class AddClasses extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		response.getWriter().append("Served at: ").append(request.getContextPath());
@@ -38,18 +41,24 @@ public class AddClasses extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String name = request.getParameter("name");
 		String grade = request.getParameter("grade");
-
-		HttpSession session = request.getSession();
+		Message message = new Message();
+		//HttpSession session = request.getSession();
 		try {
-			AddClassServiceImpl.add(name,Integer.valueOf(grade));  //调用添加班级信息的方法
-			 session.setAttribute("message", "添加成功!");
+			//调用添加班级信息的方法
+			AddClassServiceImpl.add(name,Integer.valueOf(grade));
+			message.setCode(0);
+			message.setDetail("添加成功!");
+			 //session.setAttribute("message", "添加成功!");
 		} catch (ErrorMess e) {
-			 session.setAttribute("message", e.getMessage());
+			message.setDetail(e.getMessage());
+			 //session.setAttribute("message", e.getMessage());
 		} finally {
-			 request.getRequestDispatcher("/AddClasses.jsp").forward(request, response);
+			 //request.getRequestDispatcher("/AddClasses.jsp").forward(request, response);
+			response.getWriter().println(JSONObject.toJSONString(message));
 		}
 	}
 

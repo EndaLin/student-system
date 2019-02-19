@@ -53,15 +53,15 @@ public class LoginServlet extends HttpServlet {
         String password = request.getParameter("password");
         String code = request.getParameter("code");
         String realCode = (String) request.getSession().getAttribute("validateCode");
-        if (realCode == null) {
-            message.setDetail("验证码已过期！");
-            response.getWriter().println(JSONObject.toJSONString(message));
-            return;
-        } else if (!code.equals(realCode)) {
-            message.setDetail("验证码错误！");
-            response.getWriter().println(JSONObject.toJSONString(message));
-            return;
-        }
+//        if (realCode == null) {
+//            message.setDetail("验证码已过期！");
+//            response.getWriter().println(JSONObject.toJSONString(message));
+//            return;
+//        } else if (!code.equals(realCode)) {
+//            message.setDetail("验证码错误！");
+//            response.getWriter().println(JSONObject.toJSONString(message));
+//            return;
+//        }
         try {
             byte[] resultBytes;
             //加密

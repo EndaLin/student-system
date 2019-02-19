@@ -39,6 +39,7 @@ public class ShowAllClassesFilter implements Filter {
 	/**
 	 * @see Filter#destroy()
 	 */
+	@Override
 	public void destroy() {
 		// TODO Auto-generated method stub
 	}
@@ -46,12 +47,14 @@ public class ShowAllClassesFilter implements Filter {
 	/**
 	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
 	 */
+	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		// TODO Auto-generated method stub
 		// place your code here
 
 		// pass the request along the filter chain
-		ArrayList<Classes> list = FindAllClassServiceImpl.find();   //获取所有的班级信息
+		//获取所有的班级信息
+		ArrayList<Classes> list = FindAllClassServiceImpl.find();
 		HttpServletRequest hsr = (HttpServletRequest) request;
 		HttpSession session = hsr.getSession();
 		session.setAttribute("clist", list);
@@ -61,6 +64,7 @@ public class ShowAllClassesFilter implements Filter {
 	/**
 	 * @see Filter#init(FilterConfig)
 	 */
+	@Override
 	public void init(FilterConfig fConfig) throws ServletException {
 		// TODO Auto-generated method stub
 	}

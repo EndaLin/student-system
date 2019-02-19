@@ -30,6 +30,7 @@ public class AddCourse extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		response.getWriter().append("Served at: ").append(request.getContextPath());
@@ -38,17 +39,17 @@ public class AddCourse extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		String name = request.getParameter("name");
-		HttpSession session = request.getSession();
 		try {
-			AddCourseServiceImpl.add(name); //调用非批量录入课程方法
-			session.setAttribute("message", "录入成功!");
+			//调用非批量录入课程方法
+			AddCourseServiceImpl.add(name);
 		} catch (ErrorMess e) {
-			session.setAttribute("message", e.getMessage());
 		}  finally {
-			request.getRequestDispatcher("/showCourse.jsp").forward(request, response);
+			//request.getRequestDispatcher("showCourse.html").forward(request, response);
+			response.sendRedirect("showCourse.html");
 		}
 	}
 

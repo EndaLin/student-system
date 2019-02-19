@@ -8,7 +8,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="description" content="">
 		<meta name="author" content="">
-		<link rel="shortcut icon" href="assets/ico/favicon.ico">
+
 		<link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.css">
 
 		<link rel="stylesheet" type="text/css" href="stylesheets/theme.css">
@@ -39,12 +39,12 @@
 			}
 		</style>
 
-		<link rel="shortcut icon" href="../assets/ico/favicon.ico">
+		<link rel="shortcut icon" href="assets/ico/favicon.ico">
 	</head>
 
 	<body class="">
+		<!--<![endif]-->
 		<div id="app">
-
 			<div class="navbar">
 				<div class="navbar-inner">
 					<ul class="nav pull-right">
@@ -120,46 +120,33 @@
 				</div>
 			</div>
 
+			<!--content-->
 			<div class="content">
 
 				<div class="header">
 
-					<h1 class="page-title">欢迎来到学生信息管理平台</h1>
+					<h1 class="page-title">修改课程信息</h1>
 				</div>
 
 				<ul class="breadcrumb">
 					<li>
 						<a href="index.html">Home</a> <span class="divider">/</span></li>
+					<li class="active">修改课程信息</li>
 				</ul>
-
+				<div style="margin-left: 3%;">
+					课程编号:
+					{{id}} <br /> 课程名称:
+					<br />
+					<input type="text" name="name" value='' v-bind:value="name" v-model="name"/>
+					<div class="btn-toolbar">
+						<button action="submit" class="btn btn-primary" @click="change">
+					<i class="icon-save"></i> 修改课程信息
+				</button>
+					</div>
+					<!--<div style="color:red">${message }${message = "" }</div>-->
+				</div>
 				<div class="container-fluid">
 					<div class="row-fluid">
-
-						<div class="row-fluid">
-
-							<div class="alert alert-info">
-								<button type="button" class="close" data-dismiss="alert">×</button>
-								<strong>About our project:</strong> Hope you like our works
-							</div>
-
-							<div class="block">
-								<a href="#page-stats" class="block-heading" data-toggle="collapse">About our project</a>
-								<div id="page-stats" class="block-body collapse in">
-
-									<div class="stat-widget-container">
-
-										<div class="stat-widget">
-											<div class="stat-button">
-												<p class="title">学以致用</p>
-												<p class="detail">Slogan</p>
-											</div>
-										</div>
-
-									</div>
-								</div>
-							</div>
-						</div>
-
 						<footer>
 							<hr>
 
@@ -176,11 +163,18 @@
 				</div>
 			</div>
 		</div>
-
 		<script src="lib/bootstrap/js/bootstrap.js"></script>
 		<script src="assets/js/vue.js"></script>
 		<script src="assets/js/user.js"></script>
+		<script src="assets/js/axios.min.js"></script>
 		<script type="text/javascript">
+			function getUrlParam(name) {
+				var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+				var r = window.location.search.substr(1).match(reg); //匹配目标参数
+				if(r != null) return unescape(r[2]);
+				return null; //返回参数值
+			}
+
 			$("[rel=tooltip]").tooltip();
 			$(function() {
 				$('.demo-cancel-click').click(function() {
@@ -194,7 +188,9 @@
 					user: {
 						name: '',
 						status: ''
-					}
+					},
+					id: '',
+					name: ''
 				},
 				mounted() {
 					if(islogin()) {
@@ -204,11 +200,41 @@
 					} else {
 						window.location = "login.html";
 					}
+					this.id = getUrlParam("id");
+					//this.name = getUrlParam("name");
 				},
 				methods: {
 					logout: function() {
 						logout();
 						window.location = "login.html";
+					},
+					change: function() {
+						axios({
+								url: 'http://localhost:8080/ModifyCourseNameServlet',
+								method: "post",
+								data: {
+									id: this.id,
+									name: this.name
+								},
+								transformRequest: [function(data) {
+									// Do whatever you want to transform the data
+									let ret = ''
+									for(let it in data) {
+										// 如果要发送中文 编码 
+										ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+									}
+									return ret
+								}],
+								headers: {
+									'Content-Type': 'application/x-www-form-urlencoded'
+								}
+							})
+							.then(response => {
+								alert(response.data.detail)
+							})
+							.catch(function(error) {
+								console.log(error);
+							})
 					}
 				}
 			})

@@ -8,7 +8,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="description" content="">
 		<meta name="author" content="">
-		<link rel="shortcut icon" href="assets/ico/favicon.ico">
+
 		<link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.css">
 
 		<link rel="stylesheet" type="text/css" href="stylesheets/theme.css">
@@ -38,13 +38,13 @@
 				font-weight: bold;
 			}
 		</style>
-
-		<link rel="shortcut icon" href="../assets/ico/favicon.ico">
+		<link rel="shortcut icon" href="assets/ico/favicon.ico">
 	</head>
 
 	<body class="">
-		<div id="app">
 
+		<!--<![endif]-->
+		<div id="app">
 			<div class="navbar">
 				<div class="navbar-inner">
 					<ul class="nav pull-right">
@@ -62,7 +62,7 @@
 								<li class="divider"></li>
 								<li class="divider visible-phone"></li>
 								<li>
-									<a tabindex="-1" href="#" @click="logout">Logout</a>
+									<a tabindex="-1" href="javascrip:void(0)" @click="logout">Logout</a>
 								</li>
 							</ul>
 						</li>
@@ -120,46 +120,63 @@
 				</div>
 			</div>
 
+			<!--content-->
 			<div class="content">
 
 				<div class="header">
 
-					<h1 class="page-title">欢迎来到学生信息管理平台</h1>
+					<h1 class="page-title">Class</h1>
 				</div>
 
 				<ul class="breadcrumb">
 					<li>
 						<a href="index.html">Home</a> <span class="divider">/</span></li>
+					<li class="active">Classes</li>
 				</ul>
 
 				<div class="container-fluid">
 					<div class="row-fluid">
 
-						<div class="row-fluid">
-
-							<div class="alert alert-info">
-								<button type="button" class="close" data-dismiss="alert">×</button>
-								<strong>About our project:</strong> Hope you like our works
-							</div>
-
-							<div class="block">
-								<a href="#page-stats" class="block-heading" data-toggle="collapse">About our project</a>
-								<div id="page-stats" class="block-body collapse in">
-
-									<div class="stat-widget-container">
-
-										<div class="stat-widget">
-											<div class="stat-button">
-												<p class="title">学以致用</p>
-												<p class="detail">Slogan</p>
-											</div>
-										</div>
-
-									</div>
-								</div>
-							</div>
+						<div class="btn-toolbar">
+							<button class="btn btn-primary">
+						<i class="icon-plus"></i> <a href="AddClasses.html" style="color: white;">New Classes</a>
+					</button>
+							<div class="btn-group"></div>
 						</div>
-
+						<div class="well">
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Class ID</th>
+										<th>Class Name</th>
+										<th>grade</th>
+										<th style="width: 26px;"></th>
+									</tr>
+								</thead>
+								<tbody>
+									<div>
+										<tr v-for="page in current_page">
+											<td>{{page.cid}}</td>
+											<td>{{page.cname}}</td>
+											<td>{{page.grade}}</td>
+										</tr>
+									</div>
+								</tbody>
+							</table>
+						</div>
+						<div class="pagination">
+							<ul>
+								<li v-if="current != 1">
+									<a href="javascrip:void(0);" @click="changePage(0)">Prev</a>
+								</li>
+								<li v-if="current != pages">
+									<a href="javascrip:void(0);" @click="changePage(1)">Next</a>
+								</li>
+							</ul>
+							<br />
+							<p>一个查询到 {{total}} 条记录 </p>
+							<p>当前页数 : {{current}} / {{pages}}</p><br />
+						</div>
 						<footer>
 							<hr>
 
@@ -171,15 +188,14 @@
 								<a href="javascrip:void(0)" target="_blank">wt</a>
 							</p>
 						</footer>
-
 					</div>
 				</div>
 			</div>
 		</div>
-
 		<script src="lib/bootstrap/js/bootstrap.js"></script>
 		<script src="assets/js/vue.js"></script>
 		<script src="assets/js/user.js"></script>
+		<script src="assets/js/axios.min.js"></script>>
 		<script type="text/javascript">
 			$("[rel=tooltip]").tooltip();
 			$(function() {
@@ -187,14 +203,18 @@
 					return false;
 				});
 			});
-
 			var app = new Vue({
 				el: "#app",
 				data: {
 					user: {
 						name: '',
 						status: ''
-					}
+					},
+					total: '0',
+					size: '1',
+					pages: '1',
+					current: '1',
+					current_page: []
 				},
 				mounted() {
 					if(islogin()) {
@@ -204,8 +224,116 @@
 					} else {
 						window.location = "login.html";
 					}
+					axios({
+							url: 'http://localhost:8080/FindDatabaseCountServlet',
+							method: "post",
+							data: {
+								id: '0'
+							},
+							//将JSON对象 转 键=值&键=值
+							/*
+							{
+							  name:"david",
+							  age:30
+							}
+							name=小李&age=30
+							// 在发送数据之前 将对象转键值对
+							*/
+							transformRequest: [function(data) {
+								// Do whatever you want to transform the data
+								let ret = ''
+								for(let it in data) {
+									// 如果要发送中文 编码 
+									ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+								}
+								return ret
+							}],
+							headers: {
+								'Content-Type': 'application/x-www-form-urlencoded'
+							}
+						})
+						.then(response => {
+							var data = response.data;
+							console.log(data);
+							if(data.code == 0) {
+								var message = data.message;
+								this.current = message.current;
+								this.size = message.page_size;
+								this.pages = message.pages;
+								this.total = message.total;
+							}
+						})
+						.catch(function(error) {
+							console.log(error);
+						})
+
+					axios({
+							url: 'http://localhost:8080/FindCurrentPagesServlet',
+							method: "post",
+							data: {
+								id: '0',
+								current: this.current
+							},
+							transformRequest: [function(data) {
+								// Do whatever you want to transform the data
+								let ret = ''
+								for(let it in data) {
+									// 如果要发送中文 编码 
+									ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+								}
+								return ret
+							}],
+							headers: {
+								'Content-Type': 'application/x-www-form-urlencoded'
+							}
+						})
+						.then(response => {
+							var data = response.data;
+							console.log(data);
+							this.current_page = data
+						})
+						.catch(function(error) {
+							console.log(error);
+						})
 				},
 				methods: {
+					changePage: function(type) {
+						var page = this.current;
+						if(type == 0) {
+							page--;
+						} else {
+							page++;
+						}
+						axios({
+								url: 'http://localhost:8080/FindCurrentPagesServlet',
+								method: "post",
+								data: {
+									id: '0',
+									current: page
+								},
+								transformRequest: [function(data) {
+									// Do whatever you want to transform the data
+									let ret = ''
+									for(let it in data) {
+										// 如果要发送中文 编码 
+										ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+									}
+									return ret
+								}],
+								headers: {
+									'Content-Type': 'application/x-www-form-urlencoded'
+								}
+							})
+							.then(response => {
+								var data = response.data;
+								console.log(data);
+								this.current_page = data
+								this.current = page
+							})
+							.catch(function(error) {
+								console.log(error);
+							})
+					},
 					logout: function() {
 						logout();
 						window.location = "login.html";

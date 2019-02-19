@@ -8,7 +8,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="description" content="">
 		<meta name="author" content="">
-		<link rel="shortcut icon" href="assets/ico/favicon.ico">
+
 		<link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.css">
 
 		<link rel="stylesheet" type="text/css" href="stylesheets/theme.css">
@@ -38,13 +38,12 @@
 				font-weight: bold;
 			}
 		</style>
-
-		<link rel="shortcut icon" href="../assets/ico/favicon.ico">
+		<link rel="shortcut icon" href="assets/ico/favicon.ico">
 	</head>
 
 	<body class="">
 		<div id="app">
-
+			<!--<![endif]-->
 			<div class="navbar">
 				<div class="navbar-inner">
 					<ul class="nav pull-right">
@@ -124,62 +123,81 @@
 
 				<div class="header">
 
-					<h1 class="page-title">欢迎来到学生信息管理平台</h1>
+					<h1 class="page-title">Add Student</h1>
 				</div>
 
 				<ul class="breadcrumb">
 					<li>
 						<a href="index.html">Home</a> <span class="divider">/</span></li>
+					<li>Add Students</li>
 				</ul>
 
 				<div class="container-fluid">
 					<div class="row-fluid">
 
-						<div class="row-fluid">
-
-							<div class="alert alert-info">
-								<button type="button" class="close" data-dismiss="alert">×</button>
-								<strong>About our project:</strong> Hope you like our works
-							</div>
-
-							<div class="block">
-								<a href="#page-stats" class="block-heading" data-toggle="collapse">About our project</a>
-								<div id="page-stats" class="block-body collapse in">
-
-									<div class="stat-widget-container">
-
-										<div class="stat-widget">
-											<div class="stat-button">
-												<p class="title">学以致用</p>
-												<p class="detail">Slogan</p>
-											</div>
+						<div class="well">
+							<ul class="nav nav-tabs">
+								<li class="active">
+									<a href="#home" data-toggle="tab">Profile</a>
+								</li>
+							</ul>
+							<div id="myTabContent" class="tab-content">
+								<div class="tab-pane active in" id="home">
+									<div>
+										<label>Student Name</label> <input name="name" type="text" value="" class="input-xlarge" v-model="student_name">
+										<label>Class</label>
+										<select name="type" id="DropDownTimezone" class="input-xlarge" v-model="cid">
+											<option v-for="item in items" v-bind:value="item.cid">{{item.grade}} {{item.cname}}</option>
+										</select>
+										<div class="btn-toolbar">
+											<button action="submit" class="btn btn-primary" @click="submitForm">
+										<i class="icon-save"></i> Add
+									</button>
+											<div class="btn-group"></div>
 										</div>
-
+										<div class="alert alert-success" style="width: 10%;" v-if="success != ''">
+											<strong>{{success}}</strong>
+										</div>
+										<div class="alert alert-danger" style="width: 10%;" v-if="errors != ''">
+											<strong>{{errors}}</strong>
+										</div>
 									</div>
+									<hr />
+									<form action="http://localhost:8080/SaveExcelServlet" id="tab" method="post" enctype="multipart/form-data">
+										<input type="hidden" name="path" value="AddStudent.html" />
+										<label>批量上传学生信息(请上传Excel表，学生姓名+班级ID)</label> <input name="file" type="file" value="" class="input-xlarge">
+										<div class="btn-toolbar">
+											<button action="submit" class="btn btn-primary">
+										<i class="icon-save"></i> 上传
+									</button>
+											<div class="btn-group"></div>
+										</div>
+									</form>
+									<!--<div style="color: red;">${message} ${message=""}</div>-->
 								</div>
+
 							</div>
+
+							<footer>
+								<hr>
+
+								<p class="pull-right">
+									<a href="javascrip:void(0)" title="" target="_blank">解释权归作者所有</a>
+								</p>
+
+								<p>&copy; 2019
+									<a href="javascrip:void(0)" target="_blank">wt</a>
+								</p>
+							</footer>
 						</div>
-
-						<footer>
-							<hr>
-
-							<p class="pull-right">
-								<a href="javascrip:void(0)" title="" target="_blank">解释权归作者所有</a>
-							</p>
-
-							<p>&copy; 2019
-								<a href="javascrip:void(0)" target="_blank">wt</a>
-							</p>
-						</footer>
-
 					</div>
 				</div>
 			</div>
 		</div>
-
 		<script src="lib/bootstrap/js/bootstrap.js"></script>
 		<script src="assets/js/vue.js"></script>
 		<script src="assets/js/user.js"></script>
+		<script src="assets/js/axios.min.js"></script>
 		<script type="text/javascript">
 			$("[rel=tooltip]").tooltip();
 			$(function() {
@@ -187,14 +205,18 @@
 					return false;
 				});
 			});
-
 			var app = new Vue({
 				el: "#app",
 				data: {
 					user: {
 						name: '',
 						status: ''
-					}
+					},
+					student_name: '',
+					cid: '',
+					items: [],
+					success: '',
+					errors: ''
 				},
 				mounted() {
 					if(islogin()) {
@@ -204,16 +226,70 @@
 					} else {
 						window.location = "login.html";
 					}
+					axios({
+							url: 'http://localhost:8080/GetAllClassesServlet',
+							method: "post",
+							headers: {
+								'Content-Type': 'application/x-www-form-urlencoded'
+							}
+						})
+						.then(response => {
+							var data = response.data;
+							this.items = data;
+						})
+						.catch(function(error) {
+							console.log(error);
+						})
 				},
 				methods: {
 					logout: function() {
 						logout();
 						window.location = "login.html";
+					},
+					submitForm: function() {
+						if(this.student_name == "" || this.cid == "") {
+							this.errors = "姓名或者班级不能为空"
+							return
+						} else {
+							this.errors = ""
+						}
+
+						axios({
+								url: 'http://localhost:8080/AddStudent',
+								method: "post",
+								data: {
+									name: this.student_name,
+									type: this.cid,
+								},
+								transformRequest: [function(data) {
+									// Do whatever you want to transform the data
+									let ret = ''
+									for(let it in data) {
+										// 如果要发送中文 编码 
+										ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+									}
+									return ret
+								}],
+								headers: {
+									'Content-Type': 'application/x-www-form-urlencoded'
+								}
+							})
+							.then(response => {
+								var data = response.data;
+								console.log(data);
+								if(data.code == 0) {
+									this.success = data.detail;
+								} else {
+									this.errors = data.detail;
+								}
+							})
+							.catch(function(error) {
+								console.log(error);
+							})
 					}
 				}
 			})
 		</script>
-
 	</body>
 
 </html>

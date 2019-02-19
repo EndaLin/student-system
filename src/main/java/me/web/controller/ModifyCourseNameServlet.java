@@ -9,7 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.alibaba.fastjson.JSONObject;
 import me.domain.ErrorMess;
+import me.domain.Message;
 import me.service.Impl.ModifyCourseNameServiceImpl;
 
 /**
@@ -30,6 +32,7 @@ public class ModifyCourseNameServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		doPost(request, response);
@@ -38,18 +41,24 @@ public class ModifyCourseNameServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		int id = Integer.valueOf(request.getParameter("id"));
 		String name = request.getParameter("name");
-		HttpSession session = request.getSession();
+		Message message = new Message();
+		//HttpSession session = request.getSession();
 		try {
 			ModifyCourseNameServiceImpl.modify(id, name);
-			session.setAttribute("message", "修改成功");
+			message.setCode(0);
+			message.setDetail("修改成功");
+			//session.setAttribute("message", "修改成功");
 		} catch(ErrorMess e) {
-			session.setAttribute("message", e.getMessage());
+			message.setDetail(e.getMessage());
+			//session.setAttribute("message", e.getMessage());
 		} finally {
-			request.getRequestDispatcher("/ModifyCourseName.jsp").forward(request, response);
+			//request.getRequestDispatcher("/ModifyCourseName.jsp").forward(request, response);
+			response.getWriter().println(JSONObject.toJSONString(message));
 		}
 	}
 

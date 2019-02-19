@@ -8,7 +8,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="description" content="">
 		<meta name="author" content="">
-		<link rel="shortcut icon" href="assets/ico/favicon.ico">
+
 		<link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.css">
 
 		<link rel="stylesheet" type="text/css" href="stylesheets/theme.css">
@@ -38,13 +38,13 @@
 				font-weight: bold;
 			}
 		</style>
+		<link rel="shortcut icon" href="assets/ico/favicon.ico">
 
-		<link rel="shortcut icon" href="../assets/ico/favicon.ico">
 	</head>
 
-	<body class="">
+	<body>
 		<div id="app">
-
+			<!--<![endif]-->
 			<div class="navbar">
 				<div class="navbar-inner">
 					<ul class="nav pull-right">
@@ -62,7 +62,7 @@
 								<li class="divider"></li>
 								<li class="divider visible-phone"></li>
 								<li>
-									<a tabindex="-1" href="#" @click="logout">Logout</a>
+									<a tabindex="-1" href="/StuSys/LogoutServlet">Logout</a>
 								</li>
 							</ul>
 						</li>
@@ -119,45 +119,50 @@
 					</ul>
 				</div>
 			</div>
-
 			<div class="content">
 
 				<div class="header">
 
-					<h1 class="page-title">欢迎来到学生信息管理平台</h1>
+					<h1 class="page-title">Add Classes</h1>
 				</div>
 
 				<ul class="breadcrumb">
 					<li>
 						<a href="index.html">Home</a> <span class="divider">/</span></li>
+					<li>
+						<a href="showAllClasses.html">Classes</a> <span class="divider">/</span></li>
+					<li class="active">Add Classes</li>
 				</ul>
 
 				<div class="container-fluid">
 					<div class="row-fluid">
-
-						<div class="row-fluid">
-
-							<div class="alert alert-info">
-								<button type="button" class="close" data-dismiss="alert">×</button>
-								<strong>About our project:</strong> Hope you like our works
-							</div>
-
-							<div class="block">
-								<a href="#page-stats" class="block-heading" data-toggle="collapse">About our project</a>
-								<div id="page-stats" class="block-body collapse in">
-
-									<div class="stat-widget-container">
-
-										<div class="stat-widget">
-											<div class="stat-button">
-												<p class="title">学以致用</p>
-												<p class="detail">Slogan</p>
-											</div>
+						<div class="well">
+							<ul class="nav nav-tabs">
+								<li class="active">
+									<a href="#home" data-toggle="tab">Profile</a>
+								</li>
+							</ul>
+							<div id="myTabContent" class="tab-content">
+								<div class="tab-pane active in" id="home">
+									<div>
+										<label>Class name</label> <input type="text" name="class_name" class="input-xlarge" v-model="class_name">
+										<label>Grade</label> <input type="text" name="grade" class="input-xlarge" v-model="grade">
+										<div class="btn-toolbar">
+											<button type="submit" class="btn btn-primary" @click="submitForm">
+										<i class="icon-save"></i> Add
+									</button>
 										</div>
-
+									</div>
+									<div class="alert alert-success" style="width: 10%;" v-if="success != ''">
+										<strong>{{success}}</strong>
+									</div>
+									<div class="alert alert-danger" style="width: 10%;" v-if="errors != ''">
+										<strong>{{errors}}</strong>
 									</div>
 								</div>
+								<div class="tab-pane fade" id="profile"></div>
 							</div>
+
 						</div>
 
 						<footer>
@@ -176,10 +181,10 @@
 				</div>
 			</div>
 		</div>
-
 		<script src="lib/bootstrap/js/bootstrap.js"></script>
 		<script src="assets/js/vue.js"></script>
 		<script src="assets/js/user.js"></script>
+		<script src="assets/js/axios.min.js"></script>>
 		<script type="text/javascript">
 			$("[rel=tooltip]").tooltip();
 			$(function() {
@@ -194,7 +199,11 @@
 					user: {
 						name: '',
 						status: ''
-					}
+					},
+					class_name: '',
+					grade: '',
+					success: '',
+					errors: ''
 				},
 				mounted() {
 					if(islogin()) {
@@ -206,14 +215,60 @@
 					}
 				},
 				methods: {
-					logout: function() {
-						logout();
-						window.location = "login.html";
+					submitForm: function() {
+						if(this.class_name == "" || this.grade == "") {
+							this.errors = "班级名称和年级不能为空"
+							return
+						} else {
+							this.errors = ""
+						}
+
+						axios({
+								url: 'http://localhost:8080/AddClasses',
+								method: "post",
+								data: {
+									name: this.class_name,
+									grade: this.grade,
+								},
+								//将JSON对象 转 键=值&键=值
+								/*
+								{
+								  name:"david",
+								  age:30
+								}
+								name=小李&age=30
+								// 在发送数据之前 将对象转键值对
+								*/
+								transformRequest: [function(data) {
+									// Do whatever you want to transform the data
+									let ret = ''
+									for(let it in data) {
+										// 如果要发送中文 编码 
+										ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+									}
+									return ret
+								}],
+								headers: {
+									'Content-Type': 'application/x-www-form-urlencoded'
+								}
+							})
+							.then(response => {
+								var data = response.data;
+								console.log(data);
+								if(data.code == 0) {
+									this.success = data.detail;
+									this.errors = '';
+								} else {
+									this.errors = data.detail;
+									this.success = '';
+								}
+							})
+							.catch(function(error) {
+								console.log(error);
+							})
 					}
 				}
 			})
 		</script>
-
-	</body>
 
 </html>
