@@ -39,12 +39,16 @@
 			}
 		</style>
 
-		<link rel="shortcut icon" href="assets/ico/favicon.ico">
+		<link rel="shortcut icon" href="../assets/ico/favicon.ico">
+		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+		<link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+		<link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
 	</head>
 
 	<body class="">
-		<!--<![endif]-->
 		<div id="app">
+
 			<div class="navbar">
 				<div class="navbar-inner">
 					<ul class="nav pull-right">
@@ -125,28 +129,56 @@
 
 				<div class="header">
 
-					<h1 class="page-title">修改课程信息</h1>
+					<h1 class="page-title">班级成绩排名管理</h1>
 				</div>
 
 				<ul class="breadcrumb">
 					<li>
-						<a href="index.html">Home</a> <span class="divider">/</span></li>
-					<li class="active">修改课程信息</li>
+						<a href="index.jsp">Home</a> <span class="divider">/</span></li>
+					<li class="active">班级成绩排名管理</li>
 				</ul>
-				<div style="margin-left: 3%;">
-					课程编号:
-					{{id}} <br /> 课程名称:
-					<br />
-					<input type="text" name="name" value='' v-bind:value="name" v-model="name"/>
+				<div style="margin-left:20px;">
+					请选择学期号（按学期号查询）:
+					<select name="item" v-model="item">
+						<option v-for="item in items" :value="item">{{item}}</option>
+					</select>
 					<div class="btn-toolbar">
-						<button action="submit" class="btn btn-primary" @click="change">
-					<i class="icon-save"></i> 修改课程信息
+						<button action="submit" class="btn btn-primary" @click="checkByItem">
+					<i class="icon-save"></i> 查询
 				</button>
 					</div>
-					<!--<div style="color:red">${message }${message = "" }</div>-->
+					<!--<div style="color:red;">${message1 }${message1 = "" }</div>-->
 				</div>
 				<div class="container-fluid">
 					<div class="row-fluid">
+
+						<div class="well">
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Student id</th>
+										<th>Student name</th>
+										<th>Course id</th>
+										<th>Course</th>
+										<th>Grade</th>
+										<th>Score</th>
+										<th style="width: 26px;"></th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr v-for="p in scores">
+										-
+										<td>{{p.sid}}</td>
+										<td>{{p.sname}}</td>
+										<td>{{p.courseid}}</td>
+										<td>{{p.coursename}}</td>
+										<td>{{p.grade}}</td>
+										<td v-if="p.socre != -1">{{p.score}}</td>
+										<td v-if="p.socre == -1">无</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
 						<footer>
 							<hr>
 
@@ -164,24 +196,10 @@
 			</div>
 		</div>
 		<script src="lib/bootstrap/js/bootstrap.js"></script>
+		<script src="assets/js/axios.min.js"></script>>
 		<script src="assets/js/vue.js"></script>
 		<script src="assets/js/user.js"></script>
-		<script src="assets/js/axios.min.js"></script>
 		<script type="text/javascript">
-			function getUrlParam(name) {
-				var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
-				var r = window.location.search.substr(1).match(reg); //匹配目标参数
-				if(r != null) return unescape(r[2]);
-				return null; //返回参数值
-			}
-
-			$("[rel=tooltip]").tooltip();
-			$(function() {
-				$('.demo-cancel-click').click(function() {
-					return false;
-				});
-			});
-
 			var app = new Vue({
 				el: "#app",
 				data: {
@@ -189,8 +207,11 @@
 						name: '',
 						status: ''
 					},
-					id: '',
-					name: ''
+					courses: [],
+					items: [],
+					scores: [],
+					courseid: '',
+					item: ''
 				},
 				mounted() {
 					if(islogin()) {
@@ -200,21 +221,51 @@
 					} else {
 						window.location = "login.html";
 					}
-					this.id = getUrlParam("id");
-					//this.name = getUrlParam("name");
+					axios({
+							url: 'http://localhost:8080/FindCourseByIdServlet',
+							method: "post",
+							data: {
+								id: this.user.name
+							},
+							transformRequest: [function(data) {
+								// Do whatever you want to transform the data
+								let ret = ''
+								for(let it in data) {
+									// 如果要发送中文 编码 
+									ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+								}
+								return ret
+							}],
+							headers: {
+								'Content-Type': 'application/x-www-form-urlencoded'
+							}
+						})
+						.then(response => {
+							var data = response.data;
+							console.log(data);
+							if(data.code == 0) {
+								this.courses = data.message.courses
+								this.items = data.message.items
+							} else {
+								alert("网络出错")
+							}
+						})
+						.catch(function(error) {
+							console.log(error);
+						})
 				},
 				methods: {
 					logout: function() {
 						logout();
 						window.location = "login.html";
 					},
-					change: function() {
+					checkByCourse: function() {
 						axios({
-								url: 'http://localhost:8080/ModifyCourseNameServlet',
+								url: 'http://localhost:8080/CheckScoreByCourseServlet',
 								method: "post",
 								data: {
-									id: this.id,
-									name: this.name
+									id: this.user.name,
+									courseid: this.courseid
 								},
 								transformRequest: [function(data) {
 									// Do whatever you want to transform the data
@@ -230,7 +281,47 @@
 								}
 							})
 							.then(response => {
-								alert(response.data.detail)
+								var data = response.data;
+								console.log(data);
+								if(data.code == 0) {
+									this.scores = data.message.scores
+								} else {
+									alert("网络出错")
+								}
+							})
+							.catch(function(error) {
+								console.log(error);
+							})
+					},
+					checkByItem: function() {
+						axios({
+								url: 'http://localhost:8080/SortStudentInClassServlet',
+								method: "post",
+								data: {
+									id: this.user.name,
+									item: this.item
+								},
+								transformRequest: [function(data) {
+									// Do whatever you want to transform the data
+									let ret = ''
+									for(let it in data) {
+										// 如果要发送中文 编码 
+										ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+									}
+									return ret
+								}],
+								headers: {
+									'Content-Type': 'application/x-www-form-urlencoded'
+								}
+							})
+							.then(response => {
+								var data = response.data;
+								console.log(data);
+								if(data.code == 0) {
+									this.scores = data.message.scores
+								} else {
+									alert("网络出错")
+								}
 							})
 							.catch(function(error) {
 								console.log(error);

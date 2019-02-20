@@ -14,7 +14,7 @@ import me.service.ISortStudentInClassService;
 
 public class SortStudentInClassServiceImpl implements ISortStudentInClassService{
 	public static ArrayList<Score> sort(int sid, int grade) throws ErrorMess {
-		ArrayList<Score> scores = new ArrayList<Score>();
+		ArrayList<Score> scores = new ArrayList<>();
 		Student student = FindStudentByIdServiceImpl.find(sid);
 
 		try {
@@ -22,7 +22,7 @@ public class SortStudentInClassServiceImpl implements ISortStudentInClassService
 			String sql = "select stu_id, sname, cid , cname, sum(score) AS sumScore, grade\n" +
 						"from select_course\n" +
 						"where (cid = ? AND grade = ? AND score != -1)\n" +
-						"group by stu_id";
+						"group by stu_id order by sumScore DESC ";
 
 			PreparedStatement ps = null;
 			ResultSet rs = null;

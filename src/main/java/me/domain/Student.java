@@ -7,6 +7,9 @@ public class Student {
 	private String cname; // 班级名称
 	private int cgrade; // 年级
 
+	public Student() {
+	}
+
 	public Student(int sid, String sname, int cid, String cname, int cgrade) {
 		super();
 		this.sid = sid;

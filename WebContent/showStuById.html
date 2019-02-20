@@ -132,16 +132,16 @@
 						<a href="index.html">Home</a> <span class="divider">/</span></li>
 					<li class="active">查询学生个人信息</li>
 				</ul>
-				<form action="/StuSys/FindStudentById" method="post" style="margin-left:20px;">
+				<div style="margin-left:20px;">
 					请输入学生的ID:
-					<input type="text" name="id" />
+					<input type="text" name="id" v-model="id" />
 					<div class="btn-toolbar">
-						<button action="submit" class="btn btn-primary">
+						<button action="submit" class="btn btn-primary" @click="find">
 					<i class="icon-save"></i> 查询
 				</button>
 					</div>
 					<!--<div style="color: red;">${message}${message=""}</div>-->
-				</form>
+				</div>
 				<div class="container-fluid">
 					<div class="row-fluid">
 
@@ -153,17 +153,19 @@
 										<th>Student name</th>
 										<th>Class Id</th>
 										<th>Class name</th>
+										<th>Grade</th>
 										<th style="width: 26px;"></th>
 									</tr>
 								</thead>
 								<tbody>
 									<tr>
-										<td>${stu.sid}</td>
-										<td>${stu.sname}</td>
-										<td>${stu.cid }</td>
-										<td>${stu.cgrade} ${stu.cname}</td>
+										<td>{{stu.sid}}</td>
+										<td>{{stu.sname}}</td>
+										<td>{{stu.cid}} </td>
+										<td>{{stu.cname}}</td>
+										<td>{{stu.cgrade}}</td>
 										<td>
-											<a href="/StuSys/ModifyStudent.jsp?id=${stu.sid }&name=${stu.sname}&cid=${stu.cid}&cname=${stu.cname}&cgrade=${stu.cgrade}"><i class="icon-pencil"></i></a>
+											<a href="#" @click="change"><i class="icon-pencil"></i></a>
 											<a href="#myModal" role="button" data-toggle="modal"><i class="icon-remove"></i></a>
 										</td>
 									</tr>
@@ -180,7 +182,7 @@
 										</div>
 										<div class="modal-footer">
 											<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-											<button class="btn" data-dismiss="modal" onClick="window.open('/StuSys/DeleteStudentByIdServlet?id=${stu.sid}')">Delete</button>
+											<button class="btn" data-dismiss="modal" @click="deleteStudent">Delete</button>
 										</div>
 									</div>
 								</tbody>
@@ -190,11 +192,11 @@
 							<hr>
 
 							<p class="pull-right">
-								<a href="javascrip:void(0)" title="" target="_blank">解释权归作者所有</a>
+								<a href="javascript:void(0)" title="" target="_blank">解释权归作者所有</a>
 							</p>
 
 							<p>&copy; 2019
-								<a href="javascrip:void(0)" target="_blank">wt</a>
+								<a href="javascript:void(0)" target="_blank">wt</a>
 							</p>
 						</footer>
 					</div>
@@ -219,6 +221,14 @@
 					user: {
 						name: '',
 						status: ''
+					},
+					id: '',
+					stu: {
+						sid: '',
+						sname: '',
+						cid: '',
+						cname: '',
+						cgrade: ''
 					}
 				},
 				mounted() {
@@ -234,6 +244,76 @@
 					logout: function() {
 						logout();
 						window.location = "login.html";
+					},
+					find: function() {
+						axios({
+								url: 'http://localhost:8080/FindStudentById',
+								method: "post",
+								data: {
+									id: this.id
+								},
+								transformRequest: [function(data) {
+									// Do whatever you want to transform the data
+									let ret = '';
+									for(let it in data) {
+										// 如果要发送中文 编码 
+										ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+									}
+									return ret
+								}],
+								headers: {
+									'Content-Type': 'application/x-www-form-urlencoded'
+								}
+							})
+							.then(response => {
+								var data = response.data;
+								console.log(data);
+								if(data.code == 0) {
+									this.stu = data.message.student
+								} else {
+									alert(data.detail)
+								}
+							})
+							.catch(function(error) {
+								console.log(error);
+							})
+					},
+					deleteStudent: function() {
+						axios({
+								url: 'http://localhost:8080/DeleteStudentByIdServlet',
+								method: "post",
+								data: {	
+									id: this.stu.sid
+								},
+								transformRequest: [function(data) {
+									// Do whatever you want to transform the data
+									let ret = '';
+									for(let it in data) {
+										// 如果要发送中文 编码 
+										ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+									}
+									return ret
+								}],
+								headers: {
+									'Content-Type': 'application/x-www-form-urlencoded'
+								}
+							})
+							.then(response => {
+								var data = response.data;
+								console.log(data);
+								if(data.code == 0) {
+									alert(data.detail)
+									this.stu = data.message.student
+								} else {
+									alert(data.detail)
+								}
+							})
+							.catch(function(error) {
+								console.log(error);
+							})
+					},
+					change: function() {
+						window.location = "ModifyStudent.html?id=" + this.stu.sid
 					}
 				}
 			})

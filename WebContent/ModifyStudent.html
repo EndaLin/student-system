@@ -43,7 +43,6 @@
 	</head>
 
 	<body class="">
-		<!--<![endif]-->
 		<div id="app">
 			<div class="navbar">
 				<div class="navbar-inner">
@@ -120,45 +119,66 @@
 				</div>
 			</div>
 
-			<!--content-->
 			<div class="content">
 
 				<div class="header">
 
-					<h1 class="page-title">修改课程信息</h1>
+					<h1 class="page-title"> Student</h1>
 				</div>
 
 				<ul class="breadcrumb">
 					<li>
 						<a href="index.html">Home</a> <span class="divider">/</span></li>
-					<li class="active">修改课程信息</li>
+					<li>Modify Student</li>
 				</ul>
-				<div style="margin-left: 3%;">
-					课程编号:
-					{{id}} <br /> 课程名称:
-					<br />
-					<input type="text" name="name" value='' v-bind:value="name" v-model="name"/>
-					<div class="btn-toolbar">
-						<button action="submit" class="btn btn-primary" @click="change">
-					<i class="icon-save"></i> 修改课程信息
-				</button>
-					</div>
-					<!--<div style="color:red">${message }${message = "" }</div>-->
-				</div>
+
 				<div class="container-fluid">
 					<div class="row-fluid">
-						<footer>
-							<hr>
 
-							<p class="pull-right">
-								<a href="javascript:void(0)" title="" target="_blank">解释权归作者所有</a>
-							</p>
+						<div class="well">
+							<ul class="nav nav-tabs">
+								<li class="active">
+									<a href="#home" data-toggle="tab">Profile</a>
+								</li>
+							</ul>
+							<div id="myTabContent" class="tab-content">
+								<div class="tab-pane active in" id="home">
+									<div>
+										Student ID : {{stu.sid}} <br />
+										<label>Student Name</label> <input name="name" type="text" v-model="stu.sname" class="input-xlarge">
+										<label>Class</label>
+										<select name="type" id="DropDownTimezone" class="input-xlarge" v-model="stu.cid">
+											<option v-for="item in items" v-bind:value="item.cid">{{item.grade}} {{item.cname}}</option>
+										</select>
+										<div class="btn-toolbar">
+											<button action="submit" class="btn btn-primary" @click="updateStudent">
+										<i class="icon-save"></i> Modify
+									</button>
+											<div class="btn-group"></div>
+										</div>
+									</div>
+									<div class="alert alert-success" style="width: 10%;" v-if="success != ''">
+										<strong>{{success}}</strong>
+									</div>
+									<div class="alert alert-danger" style="width: 10%;" v-if="errors != ''">
+										<strong>{{errors}}</strong>
+									</div>
+								</div>
 
-							<p>&copy; 2019
-								<a href="javascript:void(0)" target="_blank">wt</a>
-							</p>
-						</footer>
+							</div>
 
+							<footer>
+								<hr>
+
+								<p class="pull-right">
+									<a href="javascript:void(0)" title="" target="_blank">解释权归作者所有</a>
+								</p>
+
+								<p>&copy; 2019
+									<a href="javascript:void(0)" target="_blank">wt</a>
+								</p>
+							</footer>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -189,8 +209,17 @@
 						name: '',
 						status: ''
 					},
-					id: '',
-					name: ''
+					items: [],
+					name: '',
+					stu: {
+						sid: '',
+						sname: '',
+						cid: '',
+						cname: '',
+						cgrade: ''
+					},
+					success: '',
+					errors: ''
 				},
 				mounted() {
 					if(islogin()) {
@@ -200,25 +229,74 @@
 					} else {
 						window.location = "login.html";
 					}
-					this.id = getUrlParam("id");
-					//this.name = getUrlParam("name");
+					var id = getUrlParam("id")
+					if(id == null) {
+						alert("警告：id为空")
+						return
+					}
+					axios({
+							url: 'http://localhost:8080/FindStudentById',
+							method: "post",
+							data: {
+								id: id
+							},
+							transformRequest: [function(data) {
+								// Do whatever you want to transform the data
+								let ret = '';
+								for(let it in data) {
+									// 如果要发送中文 编码 
+									ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+								}
+								return ret
+							}],
+							headers: {
+								'Content-Type': 'application/x-www-form-urlencoded'
+							}
+						})
+						.then(response => {
+							var data = response.data;
+							console.log(data);
+							if(data.code == 0) {
+								this.stu = data.message.student
+							} else {
+								alert(data.detail + " 请检查请求路径！")
+							}
+						})
+						.catch(function(error) {
+							console.log(error);
+						})
+					axios({
+							url: 'http://localhost:8080/GetAllClassesServlet',
+							method: "post",
+							headers: {
+								'Content-Type': 'application/x-www-form-urlencoded'
+							}
+						})
+						.then(response => {
+							var data = response.data;
+							this.items = data;
+						})
+						.catch(function(error) {
+							console.log(error);
+						})
 				},
 				methods: {
 					logout: function() {
 						logout();
 						window.location = "login.html";
 					},
-					change: function() {
+					updateStudent: function() {
 						axios({
-								url: 'http://localhost:8080/ModifyCourseNameServlet',
+								url: 'http://localhost:8080/ModifyStudentServlet',
 								method: "post",
 								data: {
-									id: this.id,
-									name: this.name
+									id: this.stu.sid,
+									name: this.stu.sname,
+									cid: this.stu.cid
 								},
 								transformRequest: [function(data) {
 									// Do whatever you want to transform the data
-									let ret = ''
+									let ret = '';
 									for(let it in data) {
 										// 如果要发送中文 编码 
 										ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
@@ -230,7 +308,13 @@
 								}
 							})
 							.then(response => {
-								alert(response.data.detail)
+								var data = response.data;
+								console.log(data);
+								if(data.code == 0) {
+									this.success = data.detail
+								} else {
+									this.errors = data.detail
+								}
 							})
 							.catch(function(error) {
 								console.log(error);
@@ -239,7 +323,6 @@
 				}
 			})
 		</script>
-
 	</body>
 
 </html>

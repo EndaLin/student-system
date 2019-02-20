@@ -4,10 +4,6 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<title>学生信息管理平台</title>
-		<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="description" content="">
-		<meta name="author" content="">
 
 		<link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.css">
 
@@ -43,8 +39,8 @@
 	</head>
 
 	<body class="">
-		<!--<![endif]-->
 		<div id="app">
+
 			<div class="navbar">
 				<div class="navbar-inner">
 					<ul class="nav pull-right">
@@ -120,61 +116,57 @@
 				</div>
 			</div>
 
-			<!--content-->
 			<div class="content">
 
 				<div class="header">
 
-					<h1 class="page-title">修改课程信息</h1>
+					<h1 class="page-title">Add Score Message</h1>
 				</div>
 
 				<ul class="breadcrumb">
 					<li>
 						<a href="index.html">Home</a> <span class="divider">/</span></li>
-					<li class="active">修改课程信息</li>
+					<li>Add Score Message</li>
 				</ul>
-				<div style="margin-left: 3%;">
-					课程编号:
-					{{id}} <br /> 课程名称:
-					<br />
-					<input type="text" name="name" value='' v-bind:value="name" v-model="name"/>
-					<div class="btn-toolbar">
-						<button action="submit" class="btn btn-primary" @click="change">
-					<i class="icon-save"></i> 修改课程信息
-				</button>
-					</div>
-					<!--<div style="color:red">${message }${message = "" }</div>-->
-				</div>
+
 				<div class="container-fluid">
 					<div class="row-fluid">
-						<footer>
-							<hr>
 
-							<p class="pull-right">
-								<a href="javascript:void(0)" title="" target="_blank">解释权归作者所有</a>
-							</p>
-
-							<p>&copy; 2019
-								<a href="javascript:void(0)" target="_blank">wt</a>
-							</p>
-						</footer>
+						<div class="well">
+							<form action="http://localhost:8080/SaveExcelServlet" id="tab" method="post" enctype="multipart/form-data">
+								<input type="hidden" name="path" value="AddScoreMess.html" />
+								<label>批量上传学生成绩信息(请上传Excel表,学生ID+课程ID+成绩+年级)</label> <input name="file" type="file" value="" class="input-xlarge">
+								<div class="btn-toolbar">
+									<button action="submit" class="btn btn-primary">
+										<i class="icon-save"></i> 上传
+									</button>
+									<div class="btn-group"></div>
+								</div>
+							</form>
+							<!--<div style="color: red;">${message} ${message=""}</div>-->
+						</div>
 
 					</div>
+
+					<footer>
+						<hr>
+
+						<p class="pull-right">
+							<a href="javascript:void(0)" title="" target="_blank">解释权归作者所有</a>
+						</p>
+
+						<p>&copy; 2019
+							<a href="javascript:void(0)" target="_blank">wt</a>
+						</p>
+					</footer>
 				</div>
 			</div>
 		</div>
+
 		<script src="lib/bootstrap/js/bootstrap.js"></script>
 		<script src="assets/js/vue.js"></script>
 		<script src="assets/js/user.js"></script>
-		<script src="assets/js/axios.min.js"></script>
 		<script type="text/javascript">
-			function getUrlParam(name) {
-				var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
-				var r = window.location.search.substr(1).match(reg); //匹配目标参数
-				if(r != null) return unescape(r[2]);
-				return null; //返回参数值
-			}
-
 			$("[rel=tooltip]").tooltip();
 			$(function() {
 				$('.demo-cancel-click').click(function() {
@@ -188,9 +180,7 @@
 					user: {
 						name: '',
 						status: ''
-					},
-					id: '',
-					name: ''
+					}
 				},
 				mounted() {
 					if(islogin()) {
@@ -200,41 +190,11 @@
 					} else {
 						window.location = "login.html";
 					}
-					this.id = getUrlParam("id");
-					//this.name = getUrlParam("name");
 				},
 				methods: {
 					logout: function() {
 						logout();
 						window.location = "login.html";
-					},
-					change: function() {
-						axios({
-								url: 'http://localhost:8080/ModifyCourseNameServlet',
-								method: "post",
-								data: {
-									id: this.id,
-									name: this.name
-								},
-								transformRequest: [function(data) {
-									// Do whatever you want to transform the data
-									let ret = ''
-									for(let it in data) {
-										// 如果要发送中文 编码 
-										ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
-									}
-									return ret
-								}],
-								headers: {
-									'Content-Type': 'application/x-www-form-urlencoded'
-								}
-							})
-							.then(response => {
-								alert(response.data.detail)
-							})
-							.catch(function(error) {
-								console.log(error);
-							})
 					}
 				}
 			})

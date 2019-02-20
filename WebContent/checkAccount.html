@@ -43,8 +43,9 @@
 	</head>
 
 	<body class="">
-		<!--<![endif]-->
+
 		<div id="app">
+
 			<div class="navbar">
 				<div class="navbar-inner">
 					<ul class="nav pull-right">
@@ -125,28 +126,42 @@
 
 				<div class="header">
 
-					<h1 class="page-title">修改课程信息</h1>
+					<h1 class="page-title">注册账号审核</h1>
 				</div>
 
 				<ul class="breadcrumb">
 					<li>
-						<a href="index.html">Home</a> <span class="divider">/</span></li>
-					<li class="active">修改课程信息</li>
+						<a href="index.jsp">Home</a> <span class="divider">/</span></li>
+					<li class="active">注册账号审核</li>
 				</ul>
-				<div style="margin-left: 3%;">
-					课程编号:
-					{{id}} <br /> 课程名称:
-					<br />
-					<input type="text" name="name" value='' v-bind:value="name" v-model="name"/>
-					<div class="btn-toolbar">
-						<button action="submit" class="btn btn-primary" @click="change">
-					<i class="icon-save"></i> 修改课程信息
-				</button>
-					</div>
-					<!--<div style="color:red">${message }${message = "" }</div>-->
-				</div>
+
 				<div class="container-fluid">
 					<div class="row-fluid">
+
+						<div class="btn-toolbar">
+							<div class="btn-group"></div>
+						</div>
+						<div class="well">
+							<table class="table">
+								<thead>
+									<tr>
+										<th>#</th>
+										<th>账号</th>
+										<th>操作</th>
+										<th style="width: 26px;"></th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr v-for="(item,index) in items">
+										<td>{{index}}</td>
+										<td>{{item.account}}</td>
+										<td>
+											<a href="javascript:void(0);" @click="accept(item,index)">通过审核</a>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
 						<footer>
 							<hr>
 
@@ -158,23 +173,15 @@
 								<a href="javascript:void(0)" target="_blank">wt</a>
 							</p>
 						</footer>
-
 					</div>
 				</div>
 			</div>
 		</div>
 		<script src="lib/bootstrap/js/bootstrap.js"></script>
 		<script src="assets/js/vue.js"></script>
-		<script src="assets/js/user.js"></script>
 		<script src="assets/js/axios.min.js"></script>
+		<script src="assets/js/user.js"></script>
 		<script type="text/javascript">
-			function getUrlParam(name) {
-				var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
-				var r = window.location.search.substr(1).match(reg); //匹配目标参数
-				if(r != null) return unescape(r[2]);
-				return null; //返回参数值
-			}
-
 			$("[rel=tooltip]").tooltip();
 			$(function() {
 				$('.demo-cancel-click').click(function() {
@@ -189,8 +196,7 @@
 						name: '',
 						status: ''
 					},
-					id: '',
-					name: ''
+					items: []
 				},
 				mounted() {
 					if(islogin()) {
@@ -200,21 +206,26 @@
 					} else {
 						window.location = "login.html";
 					}
-					this.id = getUrlParam("id");
-					//this.name = getUrlParam("name");
+					axios({
+						url: "http://localhost:8080/FindAllAccountsWithoutCheckServlet",
+						method: "post"
+					}).then(response => {
+						var data = response.data
+						console.log(data)
+						this.items = data.message.users
+					}).catch(error => console.log(error))
 				},
 				methods: {
 					logout: function() {
 						logout();
 						window.location = "login.html";
 					},
-					change: function() {
+					accept: function(item, index) {
 						axios({
-								url: 'http://localhost:8080/ModifyCourseNameServlet',
+								url: 'http://localhost:8080/AcceptAccountServlet',
 								method: "post",
 								data: {
-									id: this.id,
-									name: this.name
+									id: item.account
 								},
 								transformRequest: [function(data) {
 									// Do whatever you want to transform the data
@@ -230,7 +241,11 @@
 								}
 							})
 							.then(response => {
-								alert(response.data.detail)
+								var data = response.data
+								if(data.code == 0) {
+									alert("审核通过成功！")
+									this.items.splice(this.index, 1);
+								}
 							})
 							.catch(function(error) {
 								console.log(error);

@@ -8,7 +8,7 @@ import me.domain.Student;
 
 public class FindStudentByCidServiceImpl {
 	public static ArrayList<Student> find(int id) {
-		ArrayList<Student> studentArrayList = new ArrayList<Student>();
+		ArrayList<Student> studentArrayList = new ArrayList<>();
 
 		try {
 
@@ -21,8 +21,8 @@ public class FindStudentByCidServiceImpl {
 			ps = con.prepareStatement(sql);
 			ps.setInt(1, id);
 			rs = ps.executeQuery();
-
-			while (rs.next()) { // 通过next来索引：判断是否有下一个记录
+           // 通过next来索引：判断是否有下一个记录
+			while (rs.next()) {
 				int sid = rs.getInt("sid");
 				String name = rs.getString("sname");
 				int cid = rs.getInt("cid");

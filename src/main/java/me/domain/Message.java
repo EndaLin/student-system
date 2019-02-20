@@ -9,7 +9,7 @@ import java.util.Map;
 public class Message {
     private int code;
     private String detail;
-    private Map<String, String> message;
+    private Map<String, Object> message;
 
     public Message() {
         this.code = 1;
@@ -31,11 +31,11 @@ public class Message {
         this.detail = detail;
     }
 
-    public Map<String, String> getMessage() {
+    public Map<String, Object> getMessage() {
         return message;
     }
 
-    public void setMessage(Map<String, String> message) {
+    public void setMessage(Map<String, Object> message) {
         this.message = message;
     }
 }

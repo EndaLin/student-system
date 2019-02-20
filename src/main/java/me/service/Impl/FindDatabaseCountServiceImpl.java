@@ -3,6 +3,7 @@ package me.service.Impl;
 import me.dao.impl.DBConnectionImpl;
 import me.domain.Classes;
 import me.domain.Message;
+import me.domain.Student;
 import me.service.FindDatabaseCountService;
 
 import java.sql.Connection;
@@ -31,18 +32,18 @@ public class FindDatabaseCountServiceImpl implements FindDatabaseCountService {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         Message message = new Message();
-        Map<String, String> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("current", "1");
         map.put("page_size", PAGE_SIZE);
         try {
             preparedStatement = connection.prepareStatement(sql.toString());
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                map.put("total", resultSet.getString("counts"));
+                map.put("total", Integer.parseInt(resultSet.getString("counts")));
             } else {
-                map.put("total", resultSet.getString("0"));
+                map.put("total", 0);
             }
-            int pages = Integer.valueOf(map.get("total")) % 10 == 0 ? Integer.valueOf(map.get("total")) / 10 : Integer.valueOf(map.get("total")) / 10 + 1;
+            int pages = (int)map.get("total") % 10 == 0 ? (int)map.get("total") / 10 : (int)map.get("total") / 10 + 1;
             map.put("pages", String.valueOf(pages));
             message.setCode(0);
             message.setDetail("查询成功");
@@ -88,4 +89,70 @@ public class FindDatabaseCountServiceImpl implements FindDatabaseCountService {
         }
     }
 
+    @Override
+    public Message checkForStudent(String id) {
+        StringBuffer sql = new StringBuffer("select count(*) counts from student where cid like ?");
+        Connection connection = DBConnectionImpl.getConnection();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        Message message = new Message();
+        Map<String, Object> map = new HashMap<>();
+        map.put("current", "1");
+        map.put("page_size", PAGE_SIZE);
+        try {
+            preparedStatement = connection.prepareStatement(sql.toString());
+            preparedStatement.setString(1, id);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                map.put("total", Integer.parseInt(resultSet.getString("counts")));
+            } else {
+                map.put("total", 0);
+            }
+            int pages = (int)map.get("total") % 10 == 0 ? (int)map.get("total") / 10 : (int)map.get("total") / 10 + 1;
+            map.put("pages", String.valueOf(pages));
+            message.setCode(0);
+            message.setDetail("查询成功");
+            message.setMessage(map);
+            return message;
+        } catch (Exception e) {
+            e.printStackTrace();
+            message.setDetail("服务器异常");
+            return message;
+        } finally {
+            DBConnectionImpl.free(connection, preparedStatement, resultSet);
+        }
+    }
+
+    @Override
+    public List<Student> findByCurrentPages2(String id, String current){
+        int start = (Integer.parseInt(current) - 1) * Integer.parseInt(PAGE_SIZE);
+        StringBuffer sql = new StringBuffer("select * from student_class where cid like ? order by cid desc limit ?,?");
+        Connection connection = DBConnectionImpl.getConnection();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        List<Student> listStudent = new ArrayList<>();
+        try {
+            preparedStatement = connection.prepareStatement(sql.toString());
+            preparedStatement.setString(1, id);
+            preparedStatement.setInt(2, start);
+            preparedStatement.setInt(3, Integer.parseInt(PAGE_SIZE));
+            resultSet = preparedStatement.executeQuery();
+            while(resultSet.next()){
+                int sid = resultSet.getInt("sid");
+                String name = resultSet.getString("sname");
+                int cid = resultSet.getInt("cid");
+                String cname = resultSet.getString("cname");
+                int cgrade = resultSet.getInt("cgrade");
+
+                Student student = new Student(sid, name, cid, cname, cgrade);
+                listStudent.add(student);
+            }
+            return listStudent;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return listStudent;
+        } finally {
+            DBConnectionImpl.free(connection, preparedStatement, resultSet);
+        }
+    }
 }

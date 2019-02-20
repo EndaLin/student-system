@@ -36,6 +36,7 @@ public class FindCourseByIdFilter implements Filter {
 	/**
 	 * @see Filter#destroy()
 	 */
+	@Override
 	public void destroy() {
 		// TODO Auto-generated method stub
 	}
@@ -43,6 +44,7 @@ public class FindCourseByIdFilter implements Filter {
 	/**
 	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
 	 */
+	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		// TODO Auto-generated method stub
 		// place your code here
@@ -51,7 +53,8 @@ public class FindCourseByIdFilter implements Filter {
 		HttpServletRequest hsr = (HttpServletRequest) request;
 		HttpSession session = hsr.getSession();
 		User user = (User) session.getAttribute("user");
-		int sid = Integer.parseInt(user.getAccount()); // 获取学生学号
+		// 获取学生学号
+		int sid = Integer.parseInt(user.getAccount());
 		try {
 			ArrayList<Course> courses = FindCourseBySidServiceImpl.find(sid);
 			session.setAttribute("courses", courses);
@@ -66,6 +69,7 @@ public class FindCourseByIdFilter implements Filter {
 	/**
 	 * @see Filter#init(FilterConfig)
 	 */
+	@Override
 	public void init(FilterConfig fConfig) throws ServletException {
 		// TODO Auto-generated method stub
 	}

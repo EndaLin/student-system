@@ -1,13 +1,18 @@
 package me.web.controller;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSONObject;
 import me.domain.ErrorMess;
+import me.domain.Message;
+import me.domain.Student;
 import me.service.Impl.DeleteStudentByIdServiceImpl;
 
 /**
@@ -28,6 +33,7 @@ public class DeleteStudentByIdServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		doPost(request, response);
@@ -36,19 +42,28 @@ public class DeleteStudentByIdServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		int id = Integer.valueOf(request.getParameter("id"));
+		Message message = new Message();
 		try {
 			DeleteStudentByIdServiceImpl.delete(id);
+			message.setCode(0);
+			message.setDetail("删除成功！");
+			Map<String, Object> map = new HashMap<>();
+			map.put("student", (new Student()));
+			message.setMessage(map);
 		} catch(ErrorMess e) {
+			message.setDetail(e.getMessage());
 			e.printStackTrace();
 		} finally {
-			if(request.getServletPath().contains("/showStuById.jsp")) {
-				request.getRequestDispatcher("/showStuById.jsp").forward(request, response);
-			} else {
-				request.getRequestDispatcher("/showStuByClass.jsp").forward(request, response);
-			}
+			response.getWriter().println(JSONObject.toJSONString(message));
+//			if(request.getServletPath().contains("/showStuById.jsp")) {
+//				request.getRequestDispatcher("/showStuById.jsp").forward(request, response);
+//			} else {
+//				request.getRequestDispatcher("/showStuByClass.jsp").forward(request, response);
+//			}
 		}
 	}
 

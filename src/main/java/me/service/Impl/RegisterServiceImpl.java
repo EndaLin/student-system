@@ -23,7 +23,7 @@ public class RegisterServiceImpl implements IRegisterService{
             ps.setString(1, user.getAccount());
             ps.setString(2, user.getPassword());
             ps.setInt(3, user.getType());
-            ps.setInt(4, -1);
+            ps.setInt(4, 0);
             ps.setString(5, user.getEmail());
 
             ps.executeUpdate();

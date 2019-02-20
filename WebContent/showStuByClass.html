@@ -40,13 +40,11 @@
 		</style>
 
 		<link rel="shortcut icon" href="assets/ico/favicon.ico">
-
 	</head>
 
 	<body class="">
-
+		<!--<![endif]-->
 		<div id="app">
-
 			<div class="navbar">
 				<div class="navbar-inner">
 					<ul class="nav pull-right">
@@ -126,35 +124,24 @@
 
 				<div class="header">
 
-					<h1 class="page-title">查询所有课程信息</h1>
+					<h1 class="page-title">查询班级学生信息</h1>
 				</div>
 
 				<ul class="breadcrumb">
 					<li>
 						<a href="index.html">Home</a> <span class="divider">/</span></li>
-					<li class="active">查询所有课程信息</li>
+					<li class="active">查询班级学生信息</li>
 				</ul>
-				<form action="http://localhost:8080/AddCourse" method="post" style="margin-left: 1%;">
-					课程名称:<br /> <input type="text" name="name" />
+				<div style="margin-left:20px;">
+					请输入班级ID:<br />
+					<input type="text" name="id" v-model="id" />
 					<div class="btn-toolbar">
-						<button action="submit" class="btn btn-primary">
-					<i class="icon-save"></i> 添加课程信息(单个)
+						<button action="submit" class="btn btn-primary" @click="find">
+					<i class="icon-save"></i> 查询
 				</button>
 					</div>
-					<!--<div style="color: red">${message }${message = "" }</div>-->
-				</form>
-				<hr />
-				<form action="http://localhost:8080/SaveExcelServlet" id="tab" method="post" enctype="multipart/form-data" style="padding-left: 1%;">
-					<input type="hidden" name="path" value="showCourse.html" /> <label>批量上传课程信息(请上传Excel表，课程名称</label>
-					<input name="file" type="file" value="" class="input-xlarge">
-					<div class="btn-toolbar">
-						<button action="submit" class="btn btn-primary">
-					<i class="icon-save"></i> 上传
-				</button>
-						<div class="btn-group"></div>
-					</div>
-					<!--<div style="color: red">${message }${message = "" }</div>-->
-				</form>
+					<!--<div style="color: red;">${message}${message=""}</div>-->
+				</div>
 				<div class="container-fluid">
 					<div class="row-fluid">
 
@@ -162,38 +149,37 @@
 							<table class="table">
 								<thead>
 									<tr>
-										<th>课程编号</th>
-										<th>课程名称</th>
-
+										<th>Student id</th>
+										<th>Student name</th>
+										<th>Class name</th>
 										<th style="width: 26px;"></th>
 									</tr>
 								</thead>
 								<tbody>
-									<div>
-										<tr v-for="(page,index) in current_page">
-											<td>{{page.id}}</td>
-											<td>{{page.name}}</td>
-											<td>
-												<a href="#" v-on:click="modifyCourse(page, index)"><i class="icon-pencil"></i></a>
-												<a href="#myModal" role="button" data-toggle="modal" v-on:click="deleteThis(page)"><i class="icon-remove"></i></a>
-											</td>
-										</tr>
-										<div class="modal small hide fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-											<div class="modal-header">
-												<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-												<h3 id="myModalLabel">Delete Confirmation</h3>
-											</div>
-											<div class="modal-body">
-												<p class="error-text">
-													<i class="icon-warning-sign modal-icon"></i>Are you sure you want to delete the record?
-												</p>
-											</div>
-											<div class="modal-footer">
-												<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-												<button class="btn" data-dismiss="modal" v-on:click="deleteCourse">Delete</button>
-											</div>
-										</div>
+									<tr v-for="(page,index) in current_page">
+										<td>{{page.sid}}</td>
+										<td>{{page.sname}}</td>
+										<td>{{page.cname}}</td>
+										<td>
+											<a href="#" @click="change(page)"><i class="icon-pencil"></i></a>
+											<a href="#myModal" role="button" data-toggle="modal" v-on:click="deleteThis(page, index)"><i class="icon-remove"></i></a>
+										</td>
+									</tr>
 
+									<div class="modal small hide fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+										<div class="modal-header">
+											<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+											<h3 id="myModalLabel">Delete Confirmation</h3>
+										</div>
+										<div class="modal-body">
+											<p class="error-text">
+												<i class="icon-warning-sign modal-icon"></i>Are you sure you want to delete the record?
+											</p>
+										</div>
+										<div class="modal-footer">
+											<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+											<button class="btn" data-dismiss="modal" v-on:click="deleteStudent">Delete</button>
+										</div>
 									</div>
 								</tbody>
 							</table>
@@ -203,7 +189,7 @@
 								<li v-if="current != 1">
 									<a href="javascrip:void(0);" @click="changePage(0)">Prev</a>
 								</li>
-								<li v-if="current != pages">
+								<li v-if="current != pages && total != 0">
 									<a href="javascrip:void(0);" @click="changePage(1)">Next</a>
 								</li>
 							</ul>
@@ -237,7 +223,6 @@
 					return false;
 				});
 			});
-
 			var app = new Vue({
 				el: "#app",
 				data: {
@@ -245,13 +230,14 @@
 						name: '',
 						status: ''
 					},
+					id: '',
 					total: '0',
 					size: '1',
 					pages: '1',
 					current: '1',
 					current_page: [],
-					delete_page: '',
-					delete_index: ''
+					select_id: '',
+					select_index: ''
 				},
 				mounted() {
 					if(islogin()) {
@@ -261,81 +247,65 @@
 					} else {
 						window.location = "login.html";
 					}
-					axios({
-							url: 'http://localhost:8080/FindDatabaseCountServlet',
-							method: "post",
-							data: {
-								id: '1'
-							},
-							//将JSON对象 转 键=值&键=值
-							/*
-							{
-							  name:"david",
-							  age:30
-							}
-							name=小李&age=30
-							// 在发送数据之前 将对象转键值对
-							*/
-							transformRequest: [function(data) {
-								// Do whatever you want to transform the data
-								let ret = ''
-								for(let it in data) {
-									// 如果要发送中文 编码 
-									ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
-								}
-								return ret
-							}],
-							headers: {
-								'Content-Type': 'application/x-www-form-urlencoded'
-							}
-						})
-						.then(response => {
-							var data = response.data;
-							console.log(data);
-							if(data.code == 0) {
-								var message = data.message;
-								this.current = message.current;
-								this.size = message.page_size;
-								this.pages = message.pages;
-								this.total = message.total;
-							}
-						})
-						.catch(function(error) {
-							console.log(error);
-						})
-
-					axios({
-							url: 'http://localhost:8080/FindCourseServlet',
-							method: "post",
-							data: {
-								current: this.current
-							},
-							transformRequest: [function(data) {
-								// Do whatever you want to transform the data
-								let ret = ''
-								for(let it in data) {
-									// 如果要发送中文 编码 
-									ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
-								}
-								return ret
-							}],
-							headers: {
-								'Content-Type': 'application/x-www-form-urlencoded'
-							}
-						})
-						.then(response => {
-							var data = response.data;
-							console.log(data);
-							this.current_page = data;
-						})
-						.catch(function(error) {
-							console.log(error);
-						})
 				},
 				methods: {
-					logout: function() {
-						logout();
-						window.location = "login.html";
+					find: function() {
+						axios({
+								url: 'http://localhost:8080/FindStudentByCid',
+								method: "get",
+								params: {
+									id: this.id
+								},
+								headers: {
+									'Content-Type': 'application/x-www-form-urlencoded'
+								}
+							})
+							.then(response => {
+								var data = response.data;
+								console.log(data);
+								if(data.code == 0) {
+									var message = data.message;
+									this.current = message.current;
+									this.size = message.page_size;
+									this.pages = message.pages;
+									this.total = message.total;
+									if(this.total == 0) {
+										alert("没有相关学生的信息")
+										return
+									}
+								}
+							})
+							.catch(function(error) {
+								console.log(error);
+							})
+						axios({
+								url: 'http://localhost:8080/FindStudentByCid',
+								method: "post",
+								data: {
+									id: this.id,
+									current: this.current
+								},
+								transformRequest: [function(data) {
+									// Do whatever you want to transform the data
+									let ret = ''
+									for(let it in data) {
+										// 如果要发送中文 编码 
+										ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+									}
+									return ret
+								}],
+								headers: {
+									'Content-Type': 'application/x-www-form-urlencoded'
+								}
+							})
+							.then(response => {
+								var data = response.data;
+								console.log(data);
+								this.current_page = data.message.student
+							})
+							.catch(function(error) {
+								console.log(error);
+							})
 					},
 					changePage: function(type) {
 						var page = this.current;
@@ -345,9 +315,10 @@
 							page++;
 						}
 						axios({
-								url: 'http://localhost:8080/FindCourseServlet',
+								url: 'http://localhost:8080/FindStudentByCid',
 								method: "post",
 								data: {
+									id: this.id,
 									current: page
 								},
 								transformRequest: [function(data) {
@@ -366,27 +337,34 @@
 							.then(response => {
 								var data = response.data;
 								console.log(data);
-								this.current_page = data
+								this.current_page = data.message.student
 								this.current = page
 							})
 							.catch(function(error) {
 								console.log(error);
 							})
 					},
-					deleteThis: function(page, index) {
-						this.delete_page = page;
-						this.delete_index = index;
+					logout: function() {
+						logout();
+						window.location = "login.html";
 					},
-					deleteCourse: function() {
+					change: function(obj) {
+						window.location = "ModifyStudent.html?id=" + obj.sid
+					},
+					deleteThis: function(obj, index) {
+						this.select_id = obj.sid
+						this.select_index = index
+					},
+					deleteStudent: function() {
 						axios({
-								url: 'http://localhost:8080/DeleteCourseServlet',
+								url: 'http://localhost:8080/DeleteStudentByIdServlet',
 								method: "post",
 								data: {
-									id: this.delete_page.id
+									id: this.select_id
 								},
 								transformRequest: [function(data) {
 									// Do whatever you want to transform the data
-									let ret = ''
+									let ret = '';
 									for(let it in data) {
 										// 如果要发送中文 编码 
 										ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
@@ -398,19 +376,20 @@
 								}
 							})
 							.then(response => {
-								this.total--;
-								console.log(response.data)
-								alert(response.data.detail + ":" + this.delete_page.name);
-								this.delete_page = '';
-								this.current_page.splice(this.index, 1);
-								this.delete_index = ''
+								if(response.data.code == 0) {
+									this.total--;
+									console.log(response.data)
+									alert("删除成功");
+									this.select_id = '';
+									this.current_page.splice(this.index, 1);
+									this.select_index = ''
+								} else {
+									alert("网络出错，删除失败");
+								}
 							})
 							.catch(function(error) {
 								console.log(error);
 							})
-					},
-					modifyCourse: function(page) {
-						window.location = "ModifyCourseName.html?id=" + page.id + "&name=" + encodeURI(page.name); 
 					}
 				}
 			})

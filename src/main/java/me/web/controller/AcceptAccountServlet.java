@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSONObject;
+import me.domain.Message;
 import me.service.Impl.AcceptAccountServiceImpl;
 
 /**
@@ -45,7 +47,11 @@ public class AcceptAccountServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		String account = request.getParameter("id");
 		AcceptAccountServiceImpl.accept(account);
-		request.getRequestDispatcher("checkAccount.jsp").forward(request, response);
+		//request.getRequestDispatcher("checkAccount.jsp").forward(request, response);
+		Message message = new Message();
+		message.setCode(0);
+		message.setDetail("审核通过");
+		response.getWriter().println(JSONObject.toJSONString(message));
 	}
 
 }
