@@ -103,6 +103,9 @@
 						<li>
 							<a href="checkAccount.html">管理员账号审核</a>
 						</li>
+						<li>
+							<a href="staticData.html">统计</a>
+						</li>
 					</ul>
 				</div>
 				<!-- 学生功能模块 -->
@@ -282,7 +285,7 @@
 						axios({
 								url: 'http://localhost:8080/DeleteStudentByIdServlet',
 								method: "post",
-								data: {	
+								data: {
 									id: this.stu.sid
 								},
 								transformRequest: [function(data) {
