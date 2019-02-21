@@ -267,15 +267,6 @@
 							data: {
 								id: '1'
 							},
-							//将JSON对象 转 键=值&键=值
-							/*
-							{
-							  name:"david",
-							  age:30
-							}
-							name=小李&age=30
-							// 在发送数据之前 将对象转键值对
-							*/
 							transformRequest: [function(data) {
 								// Do whatever you want to transform the data
 								let ret = ''
@@ -298,6 +289,11 @@
 								this.size = message.page_size;
 								this.pages = message.pages;
 								this.total = message.total;
+							}
+							var detail = getCookie("detail");
+							if(detail != null) {
+								alert(detail);
+								delCookie("detail")
 							}
 						})
 						.catch(function(error) {
@@ -410,7 +406,7 @@
 							})
 					},
 					modifyCourse: function(page) {
-						window.location = "ModifyCourseName.html?id=" + page.id + "&name=" + encodeURI(page.name); 
+						window.location = "ModifyCourseName.html?id=" + page.id + "&name=" + encodeURI(page.name);
 					}
 				}
 			})

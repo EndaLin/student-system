@@ -37,6 +37,7 @@ public class AddCourseByExcelServiceImpl implements IAddCourseByExcelService {
 					System.out.println(name);
 					ps.execute();
 				} catch (Exception e) {
+					e.printStackTrace();
 					throw new ErrorMess("已有该课程:" + name);
 				}
 			}

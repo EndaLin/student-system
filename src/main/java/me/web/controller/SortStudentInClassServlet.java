@@ -23,7 +23,7 @@ import me.service.Impl.SortStudentInClassServiceImpl;
 /**
  * Servlet implementation class SortStudentInClassServlet
  */
-@WebServlet("/SortStudentInClassServlet")
+@WebServlet("/ ")
 public class SortStudentInClassServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 

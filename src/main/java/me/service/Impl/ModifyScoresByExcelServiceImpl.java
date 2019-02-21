@@ -31,8 +31,8 @@ public class ModifyScoresByExcelServiceImpl implements IModifyScoresByExcelServi
 				// 读取该行每一列的相关信息
 				int sid = (int) (Double.parseDouble(cellList.get(0)));
 				int cid = (int) (Double.parseDouble(cellList.get(1)));
-				int score = (int) (Double.parseDouble(cellList.get(2)));
-				int grade = (int) (Double.parseDouble(cellList.get(3)));
+				int grade = (int) (Double.parseDouble(cellList.get(2)));
+				int score = (int) (Double.parseDouble(cellList.get(3)));
                 System.out.println(sid + " " + cid + " " + score + " " + grade);
 				ps.setInt(1, score);
 				ps.setInt(2, sid);

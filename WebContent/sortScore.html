@@ -40,10 +40,6 @@
 		</style>
 
 		<link rel="shortcut icon" href="../assets/ico/favicon.ico">
-		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
-		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
-		<link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
-		<link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
 	</head>
 
 	<body class="">
@@ -134,7 +130,7 @@
 
 				<ul class="breadcrumb">
 					<li>
-						<a href="index.jsp">Home</a> <span class="divider">/</span></li>
+						<a href="index.html">Home</a> <span class="divider">/</span></li>
 					<li class="active">班级成绩排名管理</li>
 				</ul>
 				<div style="margin-left:20px;">
@@ -158,8 +154,8 @@
 									<tr>
 										<th>Student id</th>
 										<th>Student name</th>
-										<th>Course id</th>
-										<th>Course</th>
+										<th>Class id</th>
+										<th>Class name</th>
 										<th>Grade</th>
 										<th>Score</th>
 										<th style="width: 26px;"></th>
@@ -170,8 +166,8 @@
 										-
 										<td>{{p.sid}}</td>
 										<td>{{p.sname}}</td>
-										<td>{{p.courseid}}</td>
-										<td>{{p.coursename}}</td>
+										<td>{{p.cid}}</td>
+										<td>{{p.cname}}</td>
 										<td>{{p.grade}}</td>
 										<td v-if="p.socre != -1">{{p.score}}</td>
 										<td v-if="p.socre == -1">无</td>
@@ -261,7 +257,7 @@
 					},
 					checkByCourse: function() {
 						axios({
-								url: 'http://localhost:8080/CheckScoreByCourseServlet',
+								url: 'http://localhost:8080/SortStudentInClassServlet',
 								method: "post",
 								data: {
 									id: this.user.name,

@@ -95,10 +95,10 @@ public class AddStudentsByExcelServiceImpl implements IAddStudentsByExcelService
 				}
 
 				ps.setString(1, String.valueOf(maxSid));
-				ps.setString(2, "123");
+				ps.setString(2, "ICznrajnkJgHW+acmAcVLSNLcA==");
 				ps.setInt(3,1);
 				ps.setInt(4,1);
-				ps.execute();
+				ps.executeUpdate();
 			}
 
 			con.commit();

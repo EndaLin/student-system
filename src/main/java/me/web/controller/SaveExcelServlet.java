@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -59,6 +60,7 @@ public class SaveExcelServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // TODO Auto-generated method stub
+        String detail = null;
         String fileSaveName = null;
         String type = null;
         Path savePath = null;
@@ -137,8 +139,6 @@ public class SaveExcelServlet extends HttpServlet {
             // 调用读取Excel的方法
             ReadExcelServiceImpl poi = new ReadExcelServiceImpl();
 
-            // List<List<String>> list = poi.read("d:/aaa.xls");
-
             List<List<String>> list = poi.read(savePath.toString());
             System.out.print(type);
             System.out.println();
@@ -158,11 +158,16 @@ public class SaveExcelServlet extends HttpServlet {
                 default:
                     break;
             }
-            request.getSession().setAttribute("message", "上传成功！");
+            //request.getSession().setAttribute("message", "上传成功！");
+            detail = "上传成功！";
         } catch (Exception e) {
+            detail = e.getMessage();
 //            request.getSession().setAttribute("message", "error" + e.getMessage());
             e.printStackTrace();
         } finally {
+            Cookie cookie = new Cookie("detail", detail);
+            cookie.setMaxAge(24 * 60 * 60);
+            response.addCookie(cookie);
             //request.getRequestDispatcher(type).forward(request, response);
             response.sendRedirect(type);
         }

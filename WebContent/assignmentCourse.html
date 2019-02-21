@@ -194,6 +194,11 @@
 					} else {
 						window.location = "login.html";
 					}
+					var detail = getCookie("detail");
+					if(detail != null) {
+						alert(detail);
+						delCookie("detail")
+					}
 				},
 				methods: {
 					logout: function() {

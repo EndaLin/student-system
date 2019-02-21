@@ -126,7 +126,7 @@ public class FindDatabaseCountServiceImpl implements FindDatabaseCountService {
     @Override
     public List<Student> findByCurrentPages2(String id, String current){
         int start = (Integer.parseInt(current) - 1) * Integer.parseInt(PAGE_SIZE);
-        StringBuffer sql = new StringBuffer("select * from student_class where cid like ? order by cid desc limit ?,?");
+        StringBuffer sql = new StringBuffer("select * from student_class where cid like ? order by sid desc limit ?,?");
         Connection connection = DBConnectionImpl.getConnection();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
