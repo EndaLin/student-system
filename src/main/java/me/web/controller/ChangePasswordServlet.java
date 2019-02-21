@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import me.domain.Message;
 import me.service.ChangePasswordService;
 import me.service.Impl.ChangePasswordServiceImpl;
-import me.service.Impl.IBase64Service;
+import me.service.IBase64Service;
 import me.service.MD5Service;
 
 import javax.servlet.ServletException;

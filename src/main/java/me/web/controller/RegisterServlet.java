@@ -7,13 +7,12 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.alibaba.fastjson.JSONObject;
 import me.domain.ErrorMess;
 import me.domain.Message;
 import me.domain.User;
-import me.service.Impl.IBase64Service;
+import me.service.IBase64Service;
 import me.service.Impl.RegisterServiceImpl;
 import me.service.MD5Service;
 

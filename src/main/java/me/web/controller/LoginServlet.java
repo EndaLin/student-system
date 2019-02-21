@@ -3,7 +3,7 @@ package me.web.controller;
 import com.alibaba.fastjson.JSONObject;
 import me.domain.Message;
 import me.domain.User;
-import me.service.Impl.IBase64Service;
+import me.service.IBase64Service;
 import me.service.Impl.LoginServiceImpl;
 import me.service.MD5Service;
 
