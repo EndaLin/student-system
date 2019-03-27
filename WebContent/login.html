@@ -217,7 +217,7 @@
 								</div>
 								<!--<button v-on:click="submitForm()" type="" class="btn btn-primary">Login</button>-->
 								<div class="form-group"><button type="submit " class="btn " style="width: 100%;" @click="submitForm">登陆</button></div>
-								<div class="form-group"><button type="submit " class="btn " style="width: 100%;">找回密码</button></div>
+								<div class="form-group"><button type="submit " class="btn " style="width: 100%;" @click="findPassword">找回密码</button></div>
 								<div class="form-group"><button type="submit " class="btn " style="width: 100%;" @click="register">管理员账号注册</button></div>
 								<div class="alert alert-danger" v-if="errors !== ''">
 									<strong>{{errors}}</strong>

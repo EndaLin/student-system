@@ -65,6 +65,9 @@ var app = new Vue({
 		},
 		reflesh: function() {
 			$("#img").attr("src", "http://localhost:8080/VerificationCodeServlet?flag=" + Math.random());
-		}
+		},
+        findPassword: function () {
+            window.location = "forgetPassword.html"
+        }
 	}
 })

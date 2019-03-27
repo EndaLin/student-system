@@ -109,6 +109,7 @@ public class ReadExcelServiceImpl implements IReadExcelService {
 
     }
 
+    @Override
     public List<List<String>> read(InputStream inputStream, boolean isExcel2003) {
 
         List<List<String>> dataLst = null;
@@ -137,9 +138,10 @@ public class ReadExcelServiceImpl implements IReadExcelService {
     }
 
     @SuppressWarnings("deprecation")
+    @Override
     public List<List<String>> read(Workbook wb) {
 
-        List<List<String>> dataLst = new ArrayList<List<String>>();
+        List<List<String>> dataLst = new ArrayList<>();
 
         /** 得到第一个shell */
 
@@ -169,7 +171,7 @@ public class ReadExcelServiceImpl implements IReadExcelService {
 
             }
 
-            List<String> rowLst = new ArrayList<String>();
+            List<String> rowLst = new ArrayList<>();
 
             /** 循环Excel的列 */
 
